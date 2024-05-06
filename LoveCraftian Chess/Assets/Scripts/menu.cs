@@ -7,12 +7,10 @@ public class menu : MonoBehaviour
 {
 
     public AudioSource AudioPlayer;
+    public Animation Player;
 
 
-    public void StartGame()
-    {   
-        SceneManager.LoadScene("Brian's Scene");
-    }
+   
     public void QuitGame()
     {
         Application.Quit();
@@ -21,5 +19,16 @@ public class menu : MonoBehaviour
     public void PlaySound()
     {
         AudioPlayer.Play();
+      //  Player = gameObject.GetComponent<Animator>();
+      //  Player.Play("Cam");
+    }
+
+    public void StartGame()
+    {   
+        SceneManager.LoadScene("Brian's Scene");
+    }
+    private void PlayAnimation()
+    {
+        
     }
 }
