@@ -46,88 +46,85 @@ public class Chessboard : MonoBehaviour
         if (!currentCamera)
         {
             currentCamera = Camera.main;
-            Debug.Log("The !current Camera if statement is triggering");
-            //return;
+            return;
         }
         RaycastHit info;
-        if (currentCamera != null)
+        Ray ray = currentCamera.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Tile", "Hover", "Highlight")))
         {
-            Ray ray = currentCamera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Tile", "Hover", "Highlight")))
-            {
-                //Get the indexes of tile we hit
-                Vector2Int hitPosition = LookupTileIndex(info.transform.gameObject);
+             //Get the indexes of tile we hit
+             Vector2Int hitPosition = LookupTileIndex(info.transform.gameObject);
 
-                //If we are hovering any tile after not hovering any tile
-                if (currentHover == -Vector2Int.one)
+             //If we are hovering any tile after not hovering any tile
+             if (currentHover == -Vector2Int.one)
                 {
                     currentHover = hitPosition;
                     tiles[hitPosition.x, hitPosition.y].layer = LayerMask.NameToLayer("Hover");
                 }
 
-                //if we were already hovernig a tile, change previous
-                if (currentHover != hitPosition)
+             //if we were already hovernig a tile, change previous
+             if (currentHover != hitPosition)
                 {
                     tiles[currentHover.x, currentHover.y].layer = (ContainsValidMove(ref availableMoves, currentHover)) ? LayerMask.NameToLayer("Highlight") : LayerMask.NameToLayer("Tile");
                     currentHover = hitPosition;
                     tiles[currentHover.x, hitPosition.y].layer = LayerMask.NameToLayer("Hover");
                 }
 
-                //if we press down left click on mouse
-                if(Input.GetMouseButtonDown(0))
-                {
-                    if (chessPieces[hitPosition.x,hitPosition.y] != null)
-                    {
-                        //Is it our turn? 
-                        if(true /* LATER CODE IN A BOOL CHECK FOR THE CEMERA SWITCHING CODE YOU WROTE STAN*/)
-                        {
-                           currentlyDragging = chessPieces[hitPosition.x, hitPosition.y];
+             //if we press down left click on mouse
+             if(Input.GetMouseButtonDown(0))
+             {
+                 if (chessPieces[hitPosition.x,hitPosition.y] != null)
+                 {
+                     //Is it our turn? 
+                     if(true /* LATER CODE IN A BOOL CHECK FOR THE CEMERA SWITCHING CODE YOU WROTE STAN*/)
+                     {
+                        currentlyDragging = chessPieces[hitPosition.x, hitPosition.y];
 
-                           // Get a list of where i can go, Highlight titles as well
-                           availableMoves = currentlyDragging.GetAvailableMoves(ref chessPieces, TILE_COUNT_X, TILE_COUNT_Y);
-                            HighlightTiles();
+                        // Get a list of where i can go, Highlight titles as well
+                        availableMoves = currentlyDragging.GetAvailableMoves(ref chessPieces, TILE_COUNT_X, TILE_COUNT_Y);
+                         HighlightTiles();
 
-                        }
-                    }
-                }
+                     }
+                 }
+             }
 
-                //if we release left click on mouse
-                if (currentlyDragging != null && Input.GetMouseButtonUp(0))
-                {
-                    Vector2Int previousPositon = new Vector2Int(currentlyDragging.currentX, currentlyDragging.currentY);
-                    
-                    bool validMove = Moveto(currentlyDragging, hitPosition.x, hitPosition.y);
-                    if (!validMove)
-                        currentlyDragging.transform.position = GetTileCenter(previousPositon.x, previousPositon.y);     
-                    
-                    currentlyDragging = null;
-                    RemoveHighlightTiles();
+             //if we are releasing left click on mouse
+             if (currentlyDragging != null && Input.GetMouseButtonUp(0))
+             {
+                 Vector2Int previousPositon = new Vector2Int(currentlyDragging.currentX, currentlyDragging.currentY);
+                 
+                 bool validMove = Moveto(currentlyDragging, hitPosition.x, hitPosition.y);
+                 if (!validMove)
+                     currentlyDragging.SetPosition(GetTileCenter(previousPositon.x, previousPositon.y));     
+                 
+                 currentlyDragging = null;
+                 RemoveHighlightTiles();
 
-                }
-            }
-            else
+             }
+        }
+        else
+        {
+            if (currentHover != -Vector2Int.one)
             {
-                if (currentHover != -Vector2Int.one)
-                {
-                    tiles[currentHover.x, currentHover.y].layer = (ContainsValidMove(ref availableMoves, currentHover)) ? LayerMask.NameToLayer("Highlight") : LayerMask.NameToLayer("Tile");
-                    currentHover = -Vector2Int.one;
-                }
+                tiles[currentHover.x, currentHover.y].layer = (ContainsValidMove(ref availableMoves, currentHover)) ? LayerMask.NameToLayer("Highlight") : LayerMask.NameToLayer("Tile");
+                currentHover = -Vector2Int.one;
+            }
 
-                if (currentlyDragging && Input.GetMouseButtonUp(0))
-                {
-                    currentlyDragging.transform.position = GetTileCenter(currentlyDragging.currentX, currentlyDragging.currentY);
-                    currentlyDragging = null;
-                    RemoveHighlightTiles();
-                }
-            }
-            // If we're dragging a piece
-            if (currentlyDragging)
+            if (currentlyDragging && Input.GetMouseButtonUp(0))
             {
-                Plane horizontalPlane = new Plane(Vector3.up, Vector3.up * yOffset);
-                float distance = 0.0f;
-                if (horizontalPlane.Raycast(ray, out distance))
-                    currentlyDragging.SetPosition(ray.GetPoint(distance) + Vector3.up * dragOffset);
+                //currentlyDragging.transform.position = GetTileCenter(currentlyDragging.currentX, currentlyDragging.currentY); //FIX FOR DRAGGING BUG HERE
+                currentlyDragging.SetPosition(GetTileCenter(currentlyDragging.currentX, currentlyDragging.currentY));
+                currentlyDragging = null;
+                RemoveHighlightTiles();
             }
+        }
+        // If we're dragging a piece
+        if (currentlyDragging)
+        {
+            Plane horizontalPlane = new Plane(Vector3.up, Vector3.up * yOffset);
+            float distance = 0.0f;
+            if (horizontalPlane.Raycast(ray, out distance))
+                currentlyDragging.SetPosition(ray.GetPoint(distance) + Vector3.up * dragOffset);
         }
     }
 
@@ -277,6 +274,7 @@ public class Chessboard : MonoBehaviour
             return false;
 
         Vector2Int previousPosition = new Vector2Int (cp.currentX, cp.currentY);
+
         //is there another piece on the target position?
         if (chessPieces[x, y] != null)
         {

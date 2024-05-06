@@ -33,7 +33,7 @@ public class ChessPiece : MonoBehaviour
 
     //check how many moves are available
 
-    public List<Vector2Int> GetAvailableMoves(ref ChessPiece[,] board, int tileCountX, int TileCountY)
+    public virtual List<Vector2Int> GetAvailableMoves(ref ChessPiece[,] board, int tileCountX, int TileCountY)
     {
         List<Vector2Int> r = new List<Vector2Int>();
 
