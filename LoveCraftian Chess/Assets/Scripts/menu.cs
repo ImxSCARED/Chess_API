@@ -5,12 +5,21 @@ using UnityEngine.SceneManagement;
 
 public class menu : MonoBehaviour
 {
+
+    public AudioSource AudioPlayer;
+
+
     public void StartGame()
-    {
-
+    {   
         SceneManager.LoadScene("Brian's Scene");
-       // Cursor.lockState = CursorLockMode.None;
+    }
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
 
-
+    public void PlaySound()
+    {
+        AudioPlayer.Play();
     }
 }
