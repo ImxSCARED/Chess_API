@@ -50,6 +50,12 @@ public class ChessPiece : MonoBehaviour
 
         return r;
     }
+
+    public virtual SpecialMove GetSpecialMoves(ref ChessPiece[,] board, ref List<Vector2Int[]> movelist, ref List<Vector2Int> avaliableMoves)
+    {
+        return SpecialMove.None;
+    }
+
     //set the positions of the pieces
     public virtual void SetPosition(Vector3 position, bool force = false)
     {
@@ -57,7 +63,6 @@ public class ChessPiece : MonoBehaviour
         if (force)
             transform.position = desiredPosition;
     }
-
     //set the size of the pieces
     public virtual void SetScale(Vector3 scale, bool force = false)
     {
