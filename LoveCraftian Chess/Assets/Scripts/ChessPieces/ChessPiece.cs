@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public enum ChessPieceType
 {
@@ -10,7 +9,8 @@ public enum ChessPieceType
     Knight = 3,
     Bishop = 4,
     Queen = 5,
-    King = 6
+    King = 6,
+    GreyMind = 7
 }
 
 public class ChessPiece : MonoBehaviour

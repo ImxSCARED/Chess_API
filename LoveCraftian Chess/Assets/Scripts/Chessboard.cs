@@ -47,6 +47,12 @@ public class Chessboard : MonoBehaviour
     //Stan's Camera stuff
     public CameraMovements camScript;
 
+    //Stan's Enemy stuff
+    private List<ChessPiece> deadElders = new List<ChessPiece>();
+
+    /// //////////////
+    /// ////////////////////////////////Seperation space ///////////////////////////////////////////////////////////////////
+    /// //////////////
     private void Awake()
     {
         isWhiteTurn = true;
@@ -56,6 +62,7 @@ public class Chessboard : MonoBehaviour
 
         GenerateAllTiles(tileSize, TILE_COUNT_X, TILE_COUNT_Y);
         SpawnAllPieces();
+        SpawnElderTeam();
         PositionAllpieces();
     }
     private void Update()
@@ -333,7 +340,7 @@ public class Chessboard : MonoBehaviour
         Application.Quit();
     }
 
-    //Spcial Moves
+    //Special Moves
     private void ProcessSpecialMove()
     {
         if (specialMove == SpecialMove.EnPassant)
@@ -676,5 +683,25 @@ public class Chessboard : MonoBehaviour
         return -Vector2Int.one;
                     
     }
+    // Stan's Enemy spawning script
+    private void SpawnElderTeam()
+    {
+        //spawn elder
+
+        
+        int eteam = 2;
+        chessPieces[3, 6] = SpawnSinglePiece(ChessPieceType.GreyMind, eteam);
+        Debug.Log("are we spawning elder?");
+        //track insanity per elder
+    }
+
+    private void KillElder()
+    {
+        //removed elder pawn
+
+        //spawn coin
+    }
+
+   
 }
  
