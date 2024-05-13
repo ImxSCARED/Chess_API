@@ -814,42 +814,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5b856ec4f8f8cb84f861f8f8a026c288, type: 3}
---- !u!1 &147766886 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1857998089916902, guid: 5b856ec4f8f8cb84f861f8f8a026c288,
-    type: 3}
-  m_PrefabInstance: {fileID: 147766885}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &147766887
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 147766886}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0babae8c8a75224faf23249724ea472, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tileMaterial: {fileID: 2100000, guid: adcb45e251370b640b78534074dfd195, type: 2}
-  tileSize: 1
-  yOffset: 0.015
-  boardCenter: {x: 63.5, y: 0, z: -3.5}
-  deathSize: 0.5
-  deathSpacing: 0.325
-  dragOffset: 1
-  victoryScreen: {fileID: 0}
-  prefabs:
-  - {fileID: 1867195236767680, guid: 18884ec92c2b94544a0e44e299c12279, type: 3}
-  - {fileID: 1211746330687442, guid: a05aa6157117a524c95288194a5570d5, type: 3}
-  - {fileID: 1179637952412708, guid: 75450c4a387627940b6e4aa320ab7e3a, type: 3}
-  - {fileID: 1672242659374470, guid: 643d4ebde92408c41b40c9406225845f, type: 3}
-  - {fileID: 1471985601831630, guid: fd4dc2297678e964f947f972e6ed3376, type: 3}
-  - {fileID: 1810274083847610, guid: af84a84384f688b4d9a365348f3579cf, type: 3}
-  teamMaterials:
-  - {fileID: 2100000, guid: 18012502b3778704ebc3fcc2e57f1b96, type: 2}
-  - {fileID: 2100000, guid: 8db048db7d0ca6646b89db09c8332a58, type: 2}
 --- !u!4 &147766890 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4363527306552524, guid: 5b856ec4f8f8cb84f861f8f8a026c288,
