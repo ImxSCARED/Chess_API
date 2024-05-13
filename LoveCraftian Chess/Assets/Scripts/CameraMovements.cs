@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 using UnityEngine.UIElements;
 
 public class CameraMovements : MonoBehaviour
@@ -16,6 +17,7 @@ public class CameraMovements : MonoBehaviour
 
     private bool moveToTargetWhite = false;
     private bool moveToTargetBlack = false;
+    private bool movedToWhiteAlready = false;
 
     void Update()
     {
@@ -53,19 +55,24 @@ public class CameraMovements : MonoBehaviour
                 moveToTargetBlack = false;
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.N))
+        
+    }
+    public void SwitchSides()
+    {
+        if (moveToTargetBlack == false && moveToTargetWhite == false && movedToWhiteAlready == true)
         {
-            TriggerMoveToTargetA();
+            TriggerMoveToTargetWhite();
+            movedToWhiteAlready = false;
         }
-        if (Input.GetKeyDown(KeyCode.M))
+        else if (moveToTargetBlack == false && moveToTargetWhite == false && movedToWhiteAlready == false)
         {
-            TriggerMoveToTargetB();
+            TriggerMoveToTargetBlack();
+            movedToWhiteAlready = true;
+
         }
     }
-
     // Trigger this method to start moving and rotating the camera
-    public void TriggerMoveToTargetA()
+    public void TriggerMoveToTargetWhite()
     {
         if (moveToTargetBlack == false && moveToTargetWhite == false)
         {
@@ -73,7 +80,7 @@ public class CameraMovements : MonoBehaviour
         }
 
     }
-    public void TriggerMoveToTargetB()
+    public void TriggerMoveToTargetBlack()
     {
         if (moveToTargetBlack == false && moveToTargetWhite == false)
         {
