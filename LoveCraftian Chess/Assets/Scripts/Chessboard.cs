@@ -44,9 +44,20 @@ public class Chessboard : MonoBehaviour
     private List<Vector2Int[]> moveList = new List<Vector2Int[]>();
 
 
+    //Stan's Camera stuff
+    public CameraMovements camScript;
+
     private void Awake()
     {
         isWhiteTurn = true;
+
+        GameObject camera = GameObject.Find("Main Camera");
+        camScript = camera.GetComponent<CameraMovements>();
+        
+        if (camScript == null)
+        {
+            Debug.LogError("ScriptA component not found!");
+        }
 
         GenerateAllTiles(tileSize, TILE_COUNT_X, TILE_COUNT_Y);
         SpawnAllPieces();
@@ -496,8 +507,10 @@ public class Chessboard : MonoBehaviour
         moveList.Add(new Vector2Int[] {previousPosition, new Vector2Int(x,y)});
 
         ProcessSpecialMove();
-
+        camScript.SwitchSides();
         return true;
+        
+
     }
     private Vector2Int LookupTileIndex(GameObject hitInfo)
     {
