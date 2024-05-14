@@ -10,7 +10,9 @@ public enum ChessPieceType
     Bishop = 4,
     Queen = 5,
     King = 6,
-    GreyMind = 7
+    GreyMind = 7,
+    RedMind = 8,
+    YellowMind = 9
 }
 
 public class ChessPiece : MonoBehaviour
@@ -24,6 +26,9 @@ public class ChessPiece : MonoBehaviour
 
    private Vector3 desiredPosition;
    private Vector3 desiredScale = Vector3.one;
+
+    public GreyMind greyScript;
+    private Chessboard chessScript;
 
     private void Start()
     {
@@ -43,11 +48,7 @@ public class ChessPiece : MonoBehaviour
     {
         List<Vector2Int> r = new List<Vector2Int>();
 
-        r.Add(new Vector2Int(3, 3));
-        r.Add(new Vector2Int(3, 4));
-        r.Add(new Vector2Int(4, 3));
-        r.Add(new Vector2Int(4, 4));
-
+     
         return r;
     }
 
