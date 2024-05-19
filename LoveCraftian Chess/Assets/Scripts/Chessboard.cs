@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public enum SpecialMove
 {
@@ -44,11 +45,25 @@ public class Chessboard : MonoBehaviour
     private List<Vector2Int[]> moveList = new List<Vector2Int[]>();
 
 
+    // STAN LAND
+
     //Stan's Camera stuff
     public CameraMovements camScript;
 
     //Stan's Enemy stuff
     private List<ChessPiece> deadElders = new List<ChessPiece>();
+
+    // counters
+    public int turnNumber = 1;
+    public int greyturnCounter = 1;
+    public int enemyturnCounter = 1;
+    // designer edited
+    public int greyTurnEveryX = 4;
+    public int enemySpawnEveryX = 2;
+
+    
+
+
 
     /// //////////////
     /// ////////////////////////////////Seperation space ///////////////////////////////////////////////////////////////////
@@ -62,7 +77,7 @@ public class Chessboard : MonoBehaviour
 
         GenerateAllTiles(tileSize, TILE_COUNT_X, TILE_COUNT_Y);
         SpawnAllPieces();
-        SpawnElderTeam();
+        //SpawnElderTeam();
         PositionAllpieces();
     }
     private void Update()
@@ -154,6 +169,12 @@ public class Chessboard : MonoBehaviour
             if (horizontalPlane.Raycast(ray, out distance))
                 currentlyDragging.SetPosition(ray.GetPoint(distance) + Vector3.up * dragOffset);
         }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            CreateGreyMind();
+        }
+
     }
 
 
@@ -222,6 +243,7 @@ public class Chessboard : MonoBehaviour
         chessPieces[6, 0] = SpawnSinglePiece(ChessPieceType.Knight, whiteteam);
         chessPieces[7, 0] = SpawnSinglePiece(ChessPieceType.Rook, whiteteam);
 
+
         for (int i = 0; i < TILE_COUNT_X; i++)
         {
             chessPieces[i, 1] = SpawnSinglePiece(ChessPieceType.Pawn, whiteteam);
@@ -241,6 +263,8 @@ public class Chessboard : MonoBehaviour
         {
             chessPieces[i, 6] = SpawnSinglePiece(ChessPieceType.Pawn, blackteam);
         }
+
+        
     }
     private ChessPiece SpawnSinglePiece(ChessPieceType type, int team)
     {
@@ -249,6 +273,16 @@ public class Chessboard : MonoBehaviour
         cp.team = team;
         cp.GetComponent<MeshRenderer>().material = teamMaterials[((team == 0) ? 0 : 6) + ((int)type - 1)];
         return cp; 
+
+    }
+
+    private ChessPiece SpawnSingleElder(ChessPieceType type, int team)
+    {
+        ChessPiece cp = Instantiate(prefabs[(int)type - 1], transform).GetComponent<ChessPiece>();
+        cp.type = type;
+        cp.team = team;
+       
+        return cp;
 
     }
 
@@ -633,10 +667,11 @@ public class Chessboard : MonoBehaviour
                     + new Vector3(tileSize / 2, 0, tileSize / 2)
                     + (Vector3.forward * deathSpacing) * deadWhites.Count);
             }
-            else
+            else if(ocp.team == 1)
             {
                 if (ocp.type == ChessPieceType.King)
                     CheckMate(0);
+
                 deadBlacks.Add(ocp);
                 ocp.SetScale(Vector3.one * deathSize);
                 ocp.SetPosition(
@@ -646,6 +681,20 @@ public class Chessboard : MonoBehaviour
                     + (Vector3.back * deathSpacing) * deadBlacks.Count);
 
             }
+            else
+            {
+                if (ocp.transform.CompareTag("GreyMind"))
+                {
+                    DestroyGreyMind();
+                    Destroy(ocp.gameObject);
+
+                }
+                if (ocp.transform.CompareTag("RedMind") || ocp.transform.CompareTag("YellowMind"))
+                {
+                    Destroy(ocp.gameObject);
+
+                }
+            }
         }
         chessPieces[x, y] = cp;
         chessPieces[previousPosition.x, previousPosition.y] = null;
@@ -653,6 +702,29 @@ public class Chessboard : MonoBehaviour
         PositionSinglePiece(x, y);
 
         isWhiteTurn = !isWhiteTurn;
+
+        // STAN:  Turn Counter
+
+        turnNumber++;
+        greyturnCounter++;
+
+        Debug.Log("Turn Number: " + turnNumber);
+        
+
+        // 
+        if(isWhiteTurn==true)
+        {
+            Debug.Log("White Turn");
+        }
+        else
+        {
+            Debug.Log("Black Turn");
+        }
+        
+        
+        // // // 
+        
+
         moveList.Add(new Vector2Int[] {previousPosition, new Vector2Int(x,y)});
 
         ProcessSpecialMove();
@@ -689,8 +761,7 @@ public class Chessboard : MonoBehaviour
         //spawn elder
 
         
-        int eteam = 2;
-        chessPieces[3, 6] = SpawnSinglePiece(ChessPieceType.GreyMind, eteam);
+        
         Debug.Log("are we spawning elder?");
         //track insanity per elder
     }
@@ -702,6 +773,36 @@ public class Chessboard : MonoBehaviour
         //spawn coin
     }
 
-   
+    private void CreateGreyMind()
+    {
+        int eteam = 2;
+        ChessPiece greyMind = SpawnSingleElder(ChessPieceType.GreyMind, eteam);
+        chessPieces[3, 3] = greyMind;
+        PositionSinglePiece(3, 3, true);
+        foreach (ChessPiece currentP in chessPieces)
+        {
+            if (currentP != null)
+            {
+                if (currentP.type == ChessPieceType.Pawn || currentP.type == ChessPieceType.Bishop || currentP.type == ChessPieceType.Knight || currentP.type == ChessPieceType.Rook)
+                {
+                    currentP.greyScript = greyMind.GetComponent<GreyMind>();
+                }
+            }
+        }
+    }
+
+    private void DestroyGreyMind()
+    {
+        foreach (ChessPiece currentP in chessPieces)
+        {
+            if (currentP != null)
+            {
+                if (currentP.type == ChessPieceType.Pawn || currentP.type == ChessPieceType.Bishop || currentP.type == ChessPieceType.Knight || currentP.type == ChessPieceType.Rook)
+                {
+                    currentP.greyScript = null;
+                }
+            }
+        }
+    }
 }
  

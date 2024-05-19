@@ -10,9 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3970115370006815925}
   - component: {fileID: 3970115370006815924}
+  - component: {fileID: 855900550}
   m_Layer: 0
   m_Name: GreyMind
-  m_TagString: Untagged
+  m_TagString: GreyMind
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -47,6 +48,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetCamera: {fileID: 0}
   rotationSpeed: 1
+--- !u!114 &855900550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3970115370006815926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db6ac49120077b44ea7c95ae85a3b17a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  team: 0
+  currentX: 0
+  currentY: 0
+  type: 0
+  greyScript: {fileID: 0}
+  Grey1: 0
+  Grey2: 0
+  Grey3: 0
+  Grey4: 0
 --- !u!1001 &3970115368958022577
 PrefabInstance:
   m_ObjectHideFlags: 0

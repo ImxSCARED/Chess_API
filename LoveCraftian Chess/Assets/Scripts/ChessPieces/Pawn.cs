@@ -3,35 +3,72 @@ using UnityEngine;
 
 public class Pawn : ChessPiece
 {
-   public override List<Vector2Int> GetAvailableMoves( ref ChessPiece[,] board, int tileCountX, int tileCountY)
+    
+    public bool normalMove = true;
+    
+   
+    public override List<Vector2Int> GetAvailableMoves( ref ChessPiece[,] board, int tileCountX, int tileCountY)
     {
-        List<Vector2Int> r = new List<Vector2Int>();
+            List<Vector2Int> r = new List<Vector2Int>();
 
-        int direction = (team == 0) ? 1 : -1;
+        bool pawnBackwardMove = false;
+        if (greyScript != null)
+            pawnBackwardMove = greyScript.Grey1;
 
-        // one in front
-        if (board[currentX, currentY + direction] == null)
-            r.Add(new Vector2Int(currentX, currentY + direction));
-
-        // two in front
-        if(board[currentX, currentY + direction] == null)
+        if (pawnBackwardMove)
         {
-            // White Team
-            if (team == 0 && currentY == 1 && board[currentX, currentY + (direction * 2)] == null)
-                r.Add(new Vector2Int(currentX, currentY + (direction * 2)));
+            int direction = (team == 0) ? 1 : -1;
+            // one in front kill
+            if (board[currentX, currentY + direction] != null && board[currentX, currentY + direction].team != team)
+                r.Add(new Vector2Int(currentX, currentY + direction));
 
-            //Black Team
-            if (team == 1 && currentY == 6 && board[currentX, currentY + (direction * 2)] == null)
-                r.Add(new Vector2Int(currentX, currentY + (direction * 2)));
+            // two in front kill
+            if (board[currentX, currentY + direction] != null && board[currentX, currentY + direction].team != team)
+            {
+                // White Team
+                if (team == 0 && currentY == 1 && board[currentX, currentY + (direction * 2)] == null)
+                    r.Add(new Vector2Int(currentX, currentY + (direction * 2)));
+
+                //Black Team
+                if (team == 1 && currentY == 6 && board[currentX, currentY + (direction * 2)] == null)
+                    r.Add(new Vector2Int(currentX, currentY + (direction * 2)));
+            }
+
+            // Inverted Move
+            if (currentX != tileCountX - 1)
+                if (board[currentX + 1, currentY + direction] == null)
+                    r.Add(new Vector2Int(currentX + 1, currentY + direction));
+            if (currentX != 0)
+                if (board[currentX - 1, currentY + direction] == null)
+                    r.Add(new Vector2Int(currentX - 1, currentY + direction));
         }
+        else
+        {
+            int direction = (team == 0) ? 1 : -1;
+            // one in front
+            if (board[currentX, currentY + direction] == null)
+                r.Add(new Vector2Int(currentX, currentY + direction));
 
-        // Kill Move
-        if (currentX != tileCountX - 1)
-            if (board[currentX + 1, currentY + direction] != null && board[currentX + 1, currentY + direction].team != team)
-                r.Add(new Vector2Int(currentX + 1, currentY + direction));
-        if (currentX != 0)
-            if (board[currentX - 1, currentY + direction] != null && board[currentX - 1, currentY + direction].team != team)
-                r.Add(new Vector2Int(currentX - 1, currentY + direction));
+            // two in front
+            if (board[currentX, currentY + direction] == null)
+            {
+                // White Team
+                if (team == 0 && currentY == 1 && board[currentX, currentY + (direction * 2)] == null)
+                    r.Add(new Vector2Int(currentX, currentY + (direction * 2)));
+
+                //Black Team
+                if (team == 1 && currentY == 6 && board[currentX, currentY + (direction * 2)] == null)
+                    r.Add(new Vector2Int(currentX, currentY + (direction * 2)));
+            }
+
+            // Kill Move
+            if (currentX != tileCountX - 1)
+                if (board[currentX + 1, currentY + direction] != null && board[currentX + 1, currentY + direction].team != team)
+                    r.Add(new Vector2Int(currentX + 1, currentY + direction));
+            if (currentX != 0)
+                if (board[currentX - 1, currentY + direction] != null && board[currentX - 1, currentY + direction].team != team)
+                    r.Add(new Vector2Int(currentX - 1, currentY + direction));
+        }
 
         return r;
     }
@@ -72,5 +109,6 @@ public class Pawn : ChessPiece
         }
 
         return SpecialMove.None;
+
     }
 }

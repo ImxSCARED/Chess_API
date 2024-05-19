@@ -15,8 +15,8 @@ public class CameraMovements : MonoBehaviour
     public float moveSpeed = 1f;  // Speed of position transition
     public float rotateSpeed = 2f; // Speed of rotation transition
 
-    private bool moveToTargetWhite = false;
-    private bool moveToTargetBlack = false;
+    public bool moveToTargetWhite = false;
+    public bool moveToTargetBlack = false;
     private bool movedToWhiteAlready = false;
 
     void Update()
