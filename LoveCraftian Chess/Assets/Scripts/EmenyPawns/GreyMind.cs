@@ -19,7 +19,7 @@ public class GreyMind : ChessPiece
     {
         Debug.Log("i have arrived Mortal fleash");
 
-        int randomNumber = Random.Range(0, 0);
+        int randomNumber = Random.Range(1, 1);
 
         switch(randomNumber)
         {

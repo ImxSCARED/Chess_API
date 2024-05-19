@@ -17,7 +17,30 @@ public class Pawn : ChessPiece
 
         if (pawnBackwardMove)
         {
+            int direction = (team == 0) ? 1 : -1;
+            // one in front kill
+            if (board[currentX, currentY + direction] != null && board[currentX, currentY + direction].team != team)
+                r.Add(new Vector2Int(currentX, currentY + direction));
 
+            // two in front kill
+            if (board[currentX, currentY + direction] != null && board[currentX, currentY + direction].team != team)
+            {
+                // White Team
+                if (team == 0 && currentY == 1 && board[currentX, currentY + (direction * 2)] == null)
+                    r.Add(new Vector2Int(currentX, currentY + (direction * 2)));
+
+                //Black Team
+                if (team == 1 && currentY == 6 && board[currentX, currentY + (direction * 2)] == null)
+                    r.Add(new Vector2Int(currentX, currentY + (direction * 2)));
+            }
+
+            // Inverted Move
+            if (currentX != tileCountX - 1)
+                if (board[currentX + 1, currentY + direction] == null)
+                    r.Add(new Vector2Int(currentX + 1, currentY + direction));
+            if (currentX != 0)
+                if (board[currentX - 1, currentY + direction] == null)
+                    r.Add(new Vector2Int(currentX - 1, currentY + direction));
         }
         else
         {
