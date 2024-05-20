@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 
-public class EyeStare : MonoBehaviour
+public class EyeStare1 : MonoBehaviour
 {
     public float rotationSpeed = 1.0f; // Speed of the rotation\
     public Camera targetCamera; // The camera that the object should face
@@ -19,7 +20,7 @@ public class EyeStare : MonoBehaviour
         if (targetCamera != null)
         {
             // Make the object face the camera
-            transform.LookAt(targetCamera.transform);
+            transform.LookAt(Input.mousePosition);     
         }
     }
 }

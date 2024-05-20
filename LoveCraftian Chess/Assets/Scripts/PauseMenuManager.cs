@@ -73,14 +73,12 @@ public class PauseMenuManager : MonoBehaviour
 
         SceneManager.LoadScene("Brian's Scene");
 
-
     }
 
     // If Main menu button is clicked Player is taken back to main menu 
     public void MainMenu()
     {
         SceneManager.LoadScene("MainMenu");
-
     }
 
     // If Quit button is clicked applicatin will close 
