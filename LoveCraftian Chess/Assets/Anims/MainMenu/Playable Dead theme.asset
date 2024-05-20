@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5e1dc532bcb41949b58bc4f2abfbb7e, type: 3}
   m_Name: LensDistortion
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   intensity:
     m_OverrideState: 1
-    m_Value: 0.38
+    m_Value: -0.62
   xMultiplier:
     m_OverrideState: 1
     m_Value: 0.4
@@ -43,7 +43,7 @@ MonoBehaviour:
   active: 1
   shadows:
     m_OverrideState: 1
-    m_Value: {x: 0.99023235, y: 0.9808377, z: 1, w: 0.1128667}
+    m_Value: {x: 0.99023235, y: 0.9808377, z: 1, w: -0.49450552}
   midtones:
     m_OverrideState: 0
     m_Value: {x: 0.92736745, y: 1, z: 0, w: -1}
@@ -136,6 +136,7 @@ MonoBehaviour:
   - {fileID: 2807440223344459258}
   - {fileID: -7312747120390028336}
   - {fileID: -8485119189658422579}
+  - {fileID: 2074477575451347001}
 --- !u!114 &441917130482553432
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -217,6 +218,28 @@ MonoBehaviour:
   blueOutBlueIn:
     m_OverrideState: 0
     m_Value: 100
+--- !u!114 &2074477575451347001
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5485954d14dfb9a4c8ead8edb0ded5b1, type: 3}
+  m_Name: LiftGammaGain
+  m_EditorClassIdentifier: 
+  active: 1
+  lift:
+    m_OverrideState: 0
+    m_Value: {x: 1, y: 1, z: 1, w: 0}
+  gamma:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1, z: 1, w: 0.13736264}
+  gain:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1, z: 1, w: -0.0000000014179624}
 --- !u!114 &2807440223344459258
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -229,19 +252,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 899c54efeace73346a0a16faa3afe726, type: 3}
   m_Name: Vignette
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   color:
     m_OverrideState: 1
-    m_Value: {r: 0, g: 0, b: 0, a: 1}
+    m_Value: {r: 0, g: 0.13839364, b: 1, a: 1}
   center:
     m_OverrideState: 1
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 0.26
   smoothness:
     m_OverrideState: 1
-    m_Value: 0.01
+    m_Value: 1
   rounded:
     m_OverrideState: 1
     m_Value: 0
@@ -260,4 +283,4 @@ MonoBehaviour:
   active: 1
   intensity:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.52
