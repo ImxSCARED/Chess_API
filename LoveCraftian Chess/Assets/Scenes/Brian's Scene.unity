@@ -4033,10 +4033,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 483397548}
+  - component: {fileID: 483397551}
   - component: {fileID: 483397547}
   - component: {fileID: 483397546}
   - component: {fileID: 483397545}
   - component: {fileID: 483397549}
+  - component: {fileID: 483397550}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -4164,6 +4166,33 @@ MonoBehaviour:
   rotateSpeed: 10
   moveToTargetWhite: 0
   moveToTargetBlack: 0
+--- !u!114 &483397550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 483397544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eaba19b6a39747f4c98b63eb572b1627, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Health: {fileID: 0}
+  maxHealth: 100
+--- !u!114 &483397551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 483397544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e791d345a1df1b4438785f8705753715, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerText: {fileID: 1048918975}
 --- !u!1001 &491152617
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7904,7 +7933,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'pieces left: 32'
+  m_text: 'pieces left: 2'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3d9aaaa810ffc5a4f941778e7af39eb5, type: 2}
   m_sharedMaterial: {fileID: 1362904585859926715, guid: 3d9aaaa810ffc5a4f941778e7af39eb5,
@@ -7932,7 +7961,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 29.75
+  m_fontSize: 31.95
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -8083,12 +8112,17 @@ PrefabInstance:
       objectReference: {fileID: 1789774902}
     - target: {fileID: 1720471477, guid: 5b856ec4f8f8cb84f861f8f8a026c288, type: 3}
       propertyPath: prefabs.Array.size
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1720471477, guid: 5b856ec4f8f8cb84f861f8f8a026c288, type: 3}
       propertyPath: prefabs.Array.data[6]
       value: 
       objectReference: {fileID: 3970115370006815926, guid: 1d60c0c8c1a8aaf429936336e1146e4e,
+        type: 3}
+    - target: {fileID: 1720471477, guid: 5b856ec4f8f8cb84f861f8f8a026c288, type: 3}
+      propertyPath: prefabs.Array.data[7]
+      value: 
+      objectReference: {fileID: 1179637952412708, guid: 3b3dd6c3ef723354797961ef819c28de,
         type: 3}
     - target: {fileID: 1720471477, guid: 5b856ec4f8f8cb84f861f8f8a026c288, type: 3}
       propertyPath: teamMaterials.Array.size
@@ -8711,7 +8745,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Black team wins
+  m_text: the Entity cOrrupts you
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f6dc6d35687dab841ac45fa76564abbe, type: 2}
   m_sharedMaterial: {fileID: 1362904585859926715, guid: f6dc6d35687dab841ac45fa76564abbe,
@@ -9371,7 +9405,7 @@ GameObject:
   - component: {fileID: 1048918976}
   - component: {fileID: 1048918975}
   m_Layer: 0
-  m_Name: Sanity bar
+  m_Name: Timer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9397,7 +9431,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Sanity:100
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3d9aaaa810ffc5a4f941778e7af39eb5, type: 2}
   m_sharedMaterial: {fileID: 1362904585859926715, guid: 3d9aaaa810ffc5a4f941778e7af39eb5,
@@ -9425,7 +9459,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 37.05
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -9483,7 +9517,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1048918974}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.000091552734}
+  m_LocalPosition: {x: 0, y: 0, z: 0.00012207031}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9492,7 +9526,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 16.796875, y: 0}
+  m_AnchoredPosition: {x: 3, y: 0}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0, y: 1}
 --- !u!1001 &1067141599
@@ -14951,40 +14985,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Settings:
   - showSettings: 1
-    Name: effect1
-    nodePos: {x: -82, y: 153}
-    Outputs: []
-    spacing: 25
-    TargetType: 1
-    targetObj: {fileID: 1048918974}
-    RunAtStart: 1
-    Loop: 1
-    EffectType: 6
-    Delay: 0
-    Speed: 1.4
-    initialState: 0
-    startVector: {x: 0, y: 0, z: 0}
-    targetVector: {x: 0, y: 0, z: 0}
-    Duration: 1
-    color: {r: 0.10116829, g: 0.5377358, b: 0, a: 1}
-    RotationType: 0
-    RotationDirection: 2
-    FadeType: 0
-    ApplyToChildren: 0
-    startAlpha: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    BrightnessDuration: 1
-    ShakeOrJellyDirection: 0
-    Amplitude: 0.1
-    running: 0
-    killed: 0
-    OnStart:
-      m_PersistentCalls:
-        m_Calls: []
-    OnFinished:
-      m_PersistentCalls:
-        m_Calls: []
-  - showSettings: 1
     Name: effect2
     nodePos: {x: 198, y: 151}
     Outputs: []
@@ -15000,7 +15000,7 @@ MonoBehaviour:
     startVector: {x: 0, y: 0, z: 0}
     targetVector: {x: 0, y: 0, z: 0}
     Duration: 1
-    color: {r: 0.012281889, g: 0.7529412, b: 0, a: 0.8509804}
+    color: {r: 1, g: 0.014745496, b: 0, a: 0.8509804}
     RotationType: 0
     RotationDirection: 2
     FadeType: 0
@@ -15010,6 +15010,40 @@ MonoBehaviour:
     BrightnessDuration: 0
     ShakeOrJellyDirection: 0
     Amplitude: 1
+    running: 0
+    killed: 0
+    OnStart:
+      m_PersistentCalls:
+        m_Calls: []
+    OnFinished:
+      m_PersistentCalls:
+        m_Calls: []
+  - showSettings: 1
+    Name: effect1
+    nodePos: {x: -82, y: 153}
+    Outputs: []
+    spacing: 25
+    TargetType: 1
+    targetObj: {fileID: 1048918974}
+    RunAtStart: 1
+    Loop: 1
+    EffectType: 6
+    Delay: 0
+    Speed: 1.5
+    initialState: 0
+    startVector: {x: 0, y: 0, z: 0}
+    targetVector: {x: 0, y: 0, z: 0}
+    Duration: 1
+    color: {r: 0.10116829, g: 0.5377358, b: 0, a: 1}
+    RotationType: 0
+    RotationDirection: 2
+    FadeType: 0
+    ApplyToChildren: 0
+    startAlpha: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    BrightnessDuration: 1
+    ShakeOrJellyDirection: 0
+    Amplitude: 0.5
     running: 0
     killed: 0
     OnStart:
@@ -17084,7 +17118,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: White team wins
+  m_text: the Entity cOrrupts you
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9acbfc64876b15d469df717444c3512f, type: 2}
   m_sharedMaterial: {fileID: 1362904585859926715, guid: 9acbfc64876b15d469df717444c3512f,
