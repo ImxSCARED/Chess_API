@@ -11,7 +11,7 @@ public enum ChessPieceType
     Queen = 5,
     King = 6,
     GreyMind = 7,
-    RedMind = 8,
+    RedDog = 8,
     YellowMind = 9
 }
 

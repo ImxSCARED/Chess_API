@@ -5,8 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - GreyMind
-  - RedMind
   - YellowMind
+  - RedDog
   layers:
   - Default
   - TransparentFX
