@@ -175,6 +175,24 @@ public class Chessboard : MonoBehaviour
             CreateGreyMind();
         }
 
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            CreateRedDog();
+        }
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            foreach( var item in chessPieces)
+            {
+                Debug.Log(item);
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+           
+        }
+        
+
     }
 
 
@@ -275,7 +293,6 @@ public class Chessboard : MonoBehaviour
         return cp; 
 
     }
-
     private ChessPiece SpawnSingleElder(ChessPieceType type, int team)
     {
         ChessPiece cp = Instantiate(prefabs[(int)type - 1], transform).GetComponent<ChessPiece>();
@@ -689,12 +706,12 @@ public class Chessboard : MonoBehaviour
                     Destroy(ocp.gameObject);
 
                 }
-                if (ocp.transform.CompareTag("RedMind") || ocp.transform.CompareTag("YellowMind"))
+                if (ocp.transform.CompareTag("RedDog") || ocp.transform.CompareTag("YellowMind"))
                 {
                     Destroy(ocp.gameObject);
 
                 }
-            }
+            } // this is the grey mind kill scirpt
         }
         chessPieces[x, y] = cp;
         chessPieces[previousPosition.x, previousPosition.y] = null;
@@ -708,7 +725,7 @@ public class Chessboard : MonoBehaviour
         turnNumber++;
         greyturnCounter++;
 
-        Debug.Log("Turn Number: " + turnNumber);
+        //Debug.Log("Turn Number: " + turnNumber);
         
 
         // 
@@ -719,6 +736,7 @@ public class Chessboard : MonoBehaviour
         else
         {
             Debug.Log("Black Turn");
+            RedMoves();
         }
         
         
@@ -755,30 +773,19 @@ public class Chessboard : MonoBehaviour
         return -Vector2Int.one;
                     
     }
+
+
     // Stan's Enemy spawning script
-    private void SpawnElderTeam()
+ 
+    private void CreateGreyMind1()
     {
-        //spawn elder
-
-        
-        
-        Debug.Log("are we spawning elder?");
-        //track insanity per elder
-    }
-
-    private void KillElder()
-    {
-        //removed elder pawn
-
-        //spawn coin
-    }
-
-    private void CreateGreyMind()
-    {
+        int randomGreyX = UnityEngine.Random.Range(0, 8);
+        int randomGreyY = UnityEngine.Random.Range(2, 6);
         int eteam = 2;
         ChessPiece greyMind = SpawnSingleElder(ChessPieceType.GreyMind, eteam);
-        chessPieces[3, 3] = greyMind;
-        PositionSinglePiece(3, 3, true);
+        chessPieces[randomGreyX, randomGreyY] = greyMind;
+        PositionSinglePiece(randomGreyX, randomGreyY, true);
+        
         foreach (ChessPiece currentP in chessPieces)
         {
             if (currentP != null)
@@ -789,7 +796,7 @@ public class Chessboard : MonoBehaviour
                 }
             }
         }
-    }
+    } // old spawning mechanism
 
     private void DestroyGreyMind()
     {
@@ -804,5 +811,149 @@ public class Chessboard : MonoBehaviour
             }
         }
     }
-}
- 
+    private bool CreateRedDog()
+    {
+        int attempts = 0;
+        int maxAttempts = 100; // Set a limit to avoid potential infinite loops
+        bool placedSuccessfully = false;
+
+        while (!placedSuccessfully && attempts < maxAttempts)
+        {
+            attempts++;
+            int randomRedX = UnityEngine.Random.Range(0, 8);
+            int randomRedY = UnityEngine.Random.Range(2, 6);
+            int eteam = 2;
+            ChessPiece redDog = SpawnSingleElder(ChessPieceType.RedDog, eteam);
+
+            if (chessPieces[randomRedX, randomRedY] == null)
+            {
+                chessPieces[randomRedX, randomRedY] = redDog;
+                PositionSinglePiece(randomRedX, randomRedY, true);
+                placedSuccessfully = true;
+            }
+            else
+            {
+                ChessPiece ocp = chessPieces[randomRedX, randomRedY];
+
+                if (redDog.team == ocp.team)
+                {
+                    // If the same team, retry
+                    continue;
+                }
+
+                // If it's the enemy team
+                if (ocp.team == 0)
+                {
+                    if (ocp.type == ChessPieceType.King)
+                        CheckMate(1);
+
+                    deadWhites.Add(ocp);
+                    ocp.SetScale(Vector3.one * deathSize);
+                    ocp.SetPosition(
+                        new Vector3(8 * tileSize, yOffset, -1 * tileSize)
+                        - bounds
+                        + new Vector3(tileSize / 2, 0, tileSize / 2)
+                        + (Vector3.forward * deathSpacing) * deadWhites.Count);
+                }
+                else if (ocp.team == 1)
+                {
+                    if (ocp.type == ChessPieceType.King)
+                        CheckMate(0);
+
+                    deadBlacks.Add(ocp);
+                    ocp.SetScale(Vector3.one * deathSize);
+                    ocp.SetPosition(
+                        new Vector3(-1 * tileSize, yOffset, 8 * tileSize)
+                        - bounds
+                        + new Vector3(tileSize / 2, 0, tileSize / 2)
+                        + (Vector3.back * deathSpacing) * deadBlacks.Count);
+                }
+
+                chessPieces[randomRedX, randomRedY] = redDog;
+                PositionSinglePiece(randomRedX, randomRedY, true);
+                placedSuccessfully = true;
+            }
+        }
+
+        return placedSuccessfully;
+    }
+    private bool CreateGreyMind()
+    {
+        int attempts = 0;
+        int maxAttempts = 100; // Set a limit to avoid potential infinite loops
+        bool placedSuccessfully = false;
+
+        while (!placedSuccessfully && attempts < maxAttempts)
+        {
+            attempts++;
+            int randomGreyX = UnityEngine.Random.Range(0, 8);
+            int randomGreyY = UnityEngine.Random.Range(2, 6);
+            int eteam = 2;
+            ChessPiece greyMind = SpawnSingleElder(ChessPieceType.GreyMind, eteam);
+
+            if (chessPieces[randomGreyX, randomGreyY] == null)
+            {
+                chessPieces[randomGreyX, randomGreyY] = greyMind;
+                PositionSinglePiece(randomGreyX, randomGreyY, true);
+                placedSuccessfully = true;
+            }
+            else
+            {
+                ChessPiece ocp = chessPieces[randomGreyX, randomGreyY];
+
+                if (greyMind.team == ocp.team)
+                {
+                    // If the same team, retry
+                    continue;
+                }
+
+                // If it's the enemy team
+                if (ocp.team == 0)
+                {
+                    if (ocp.type == ChessPieceType.King)
+                        CheckMate(1);
+
+                    deadWhites.Add(ocp);
+                    ocp.SetScale(Vector3.one * deathSize);
+                    ocp.SetPosition(
+                        new Vector3(8 * tileSize, yOffset, -1 * tileSize)
+                        - bounds
+                        + new Vector3(tileSize / 2, 0, tileSize / 2)
+                        + (Vector3.forward * deathSpacing) * deadWhites.Count);
+                }
+                else if (ocp.team == 1)
+                {
+                    if (ocp.type == ChessPieceType.King)
+                        CheckMate(0);
+
+                    deadBlacks.Add(ocp);
+                    ocp.SetScale(Vector3.one * deathSize);
+                    ocp.SetPosition(
+                        new Vector3(-1 * tileSize, yOffset, 8 * tileSize)
+                        - bounds
+                        + new Vector3(tileSize / 2, 0, tileSize / 2)
+                        + (Vector3.back * deathSpacing) * deadBlacks.Count);
+                }
+
+                chessPieces[randomGreyX, randomGreyY] = greyMind;
+                PositionSinglePiece(randomGreyX, randomGreyY, true);
+                placedSuccessfully = true;
+            }
+        }
+
+        return placedSuccessfully;
+    }
+    private void RedMoves()
+    {
+       //Debug.Log("first part of REDMoves");
+       foreach (ChessPiece thePiece in chessPieces)
+        {
+           // Debug.Log("second part of REDMoves");
+            if (thePiece is RedDog red)
+            {
+                // add move code here
+               // Debug.Log("Red Moved");
+            }
+        }
+    }
+} 
