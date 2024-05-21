@@ -4,17 +4,11 @@ using UnityEngine;
 public class Pawn : ChessPiece
 {
     
-    //public bool normalMove = true;
-    
+    public bool pawnBackwardMove = false;    
    
     public override List<Vector2Int> GetAvailableMoves( ref ChessPiece[,] board, int tileCountX, int tileCountY)
     {
             List<Vector2Int> r = new List<Vector2Int>();
-
-        bool pawnBackwardMove = false;
-        if (greyScript != null)
-            pawnBackwardMove = greyScript.pawnInvert;
-
         if (pawnBackwardMove)
         {
             int direction = (team == 0) ? 1 : -1;

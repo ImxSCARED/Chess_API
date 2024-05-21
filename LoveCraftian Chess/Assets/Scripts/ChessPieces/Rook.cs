@@ -4,31 +4,24 @@ using UnityEngine;
 
 public class Rook : ChessPiece
 {
-    public string materialPath = "FrozenMat/Cosmos";
-    private Material originalMaterial;
+    
+    
+    private void Awake()
+    {
+        originalMaterial = gameObject.GetComponent<Renderer>().material;
+    }
     public override List<Vector2Int> GetAvailableMoves(ref ChessPiece[,] board, int tileCountX, int tileCountY)
     {
         List<Vector2Int> r = new List<Vector2Int>();
 
-        bool rookFrozen = false;
-        if (greyScript != null)  base 
-            rookFrozen = greyScript.lockRook;
+       
 
-        if (rookFrozen)
+        if (isFrozen)
         {
             Debug.Log("rook frozen bool activated");
-           // Load the material
-            Material newMaterial = Resources.Load<Material>(materialPath);
-            Renderer renderer = gameObject.GetComponent<Renderer>();
-            originalMaterial = renderer.material;
-            renderer.material = newMaterial;   
-            //return r;
         }
         else
         {
-            Renderer renderer = gameObject.GetComponent<Renderer>();
-            originalMaterial = renderer.material;
-            renderer.material = originalMaterial;
             //Down
             for (int i = currentY - 1; i >= 0; i--)
             {
