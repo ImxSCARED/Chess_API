@@ -4,7 +4,7 @@ using UnityEngine;
 public class Pawn : ChessPiece
 {
     
-    public bool normalMove = true;
+    //public bool normalMove = true;
     
    
     public override List<Vector2Int> GetAvailableMoves( ref ChessPiece[,] board, int tileCountX, int tileCountY)
@@ -13,7 +13,7 @@ public class Pawn : ChessPiece
 
         bool pawnBackwardMove = false;
         if (greyScript != null)
-            pawnBackwardMove = greyScript.Grey1;
+            pawnBackwardMove = greyScript.pawnInvert;
 
         if (pawnBackwardMove)
         {

@@ -5,10 +5,13 @@ using UnityEngine;
 public class GreyMind : ChessPiece
     
 {
-    public bool Grey1 = false;
-    public bool Grey2 = false;
-    public bool Grey3 = false;
-    public bool Grey4 = false;
+    public bool pawnInvert = false;
+    public bool lockRookBishOrKnight = false;
+    public bool lockRook = false;
+    public bool lockBishop = false;
+    public bool lockKight = false;
+    public bool eldrichBoard = false;
+    public bool spawnEnemy = false;
 
     public override List<Vector2Int> GetAvailableMoves(ref ChessPiece[,] board, int tileCountX, int tileCountY)
     {
@@ -26,19 +29,42 @@ public class GreyMind : ChessPiece
             case 0:
                 Debug.Log("Random number is 0. Running code A. (pawn switch)");
                 // Run code A
-                Grey1 = true;
+                pawnInvert = true;
                 break;
             case 1:
                 Debug.Log("Random number is 1. Running code B.(locking rook, bishops or knights switch)");
                 // Run code B
+                int randomFreeze = Random.Range(0, 0);
+                switch(randomFreeze)
+                {
+                    case 0:
+                        //run rook
+                        lockRook = true;
+
+                        break;
+                    case 1:
+                        //run bishop
+                        lockBishop = true;
+                        break;
+                    case 2:
+                        //run knight
+                        lockKight = true;
+                        break;
+                    default:
+                        Debug.LogError("Unexpected random freeze number!");
+                        break;
+                }
                 break;
             case 2:
                 Debug.Log("Random number is 2. Running code C. (visual effect on board) ");
                 // Run code C
+                eldrichBoard = true;
+
                 break;
             case 3:
                 Debug.Log("Random number is 3. Running code D. (spawn en enemy unit ");
                 // Run code C
+                spawnEnemy = true;
                 break;
             default:
                 Debug.LogError("Unexpected random number!");
