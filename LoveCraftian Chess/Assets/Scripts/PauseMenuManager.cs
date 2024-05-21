@@ -71,6 +71,7 @@ public class PauseMenuManager : MonoBehaviour
     public void Restart()
     {
 
+        Time.timeScale = 1;
         SceneManager.LoadScene("Brian's Scene");
 
     }
@@ -78,6 +79,7 @@ public class PauseMenuManager : MonoBehaviour
     // If Main menu button is clicked Player is taken back to main menu 
     public void MainMenu()
     {
+        Time.timeScale = 1;
         SceneManager.LoadScene("MainMenu");
     }
 

@@ -5,9 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class menu : MonoBehaviour
 {
-
+    public Animator fadeAnimator;
+    public AudioSource backgroundMusic;
+    public float fadeDuration = 1.0f; // Duration for fading out the music
     public AudioSource AudioPlayer;
-    public Animation Player;
 
 
    
@@ -24,11 +25,8 @@ public class menu : MonoBehaviour
     }
 
     public void StartGame()
-    {   
-        SceneManager.LoadScene("Brian's Scene");
-    }
-    private void PlayAnimation()
     {
-        
+       
+        SceneManager.LoadScene("Brian's Scene");
     }
 }
