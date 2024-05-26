@@ -19,13 +19,17 @@ public class ChessPiece : MonoBehaviour
 {
 
     [Header("variables")]
-   public int team;
-   public int currentX;
-   public int currentY;
-   public ChessPieceType type;
+    public int team;
+    public int currentX;
+    public int currentY;
+    public ChessPieceType type;
 
-   private Vector3 desiredPosition;
-   private Vector3 desiredScale = Vector3.one;
+    public string materialPath = "FrozenMat/Cosmos";
+    public Material originalMaterial;
+
+    public bool isFrozen = false; //Only use on bishop, Rook, Knight to stop their movement
+    private Vector3 desiredPosition;
+    private Vector3 desiredScale = Vector3.one;
 
     public GreyMind greyScript;
     private Chessboard chessScript;
@@ -70,5 +74,34 @@ public class ChessPiece : MonoBehaviour
         desiredScale = scale;
         if (force)
             transform.localScale = desiredScale;
+    }
+
+    //swaps the material/look to frozen one
+    public void FreezePiece()
+    {
+        if(type == ChessPieceType.Rook || type == ChessPieceType.Knight || type == ChessPieceType.Bishop)
+        {
+            isFrozen = true;
+            Material[] mats = gameObject.GetComponent<Renderer>().materials;
+            mats[0] = Resources.Load<Material>(materialPath);
+            gameObject.GetComponent<Renderer>().materials = mats;
+        }
+        else
+        {
+            Debug.Log("Trying to freeze a piece that cant freeze fucking idiot");
+        }
+    }
+
+    public void UnFreezePiece()
+    {
+        if(type == ChessPieceType.Rook || type == ChessPieceType.Knight || type == ChessPieceType.Bishop)
+        {
+            isFrozen = false;
+            gameObject.GetComponent<Renderer>().material = originalMaterial;
+        }
+        else
+        {
+            Debug.Log("Trying to unfreeze a piece that cant unfreeze fucking idiot");
+        }
     }
 }

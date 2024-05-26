@@ -262,10 +262,10 @@ public class Chessboard : MonoBehaviour
         chessPieces[7, 0] = SpawnSinglePiece(ChessPieceType.Rook, whiteteam);
 
 
-        for (int i = 0; i < TILE_COUNT_X; i++)
+       /* for (int i = 0; i < TILE_COUNT_X; i++)
         {
             chessPieces[i, 1] = SpawnSinglePiece(ChessPieceType.Pawn, whiteteam);
-        }
+        }*/
 
         //Black Team
         chessPieces[0, 7] = SpawnSinglePiece(ChessPieceType.Rook, blackteam);
@@ -277,10 +277,10 @@ public class Chessboard : MonoBehaviour
         chessPieces[6, 7] = SpawnSinglePiece(ChessPieceType.Knight, blackteam);
         chessPieces[7, 7] = SpawnSinglePiece(ChessPieceType.Rook, blackteam);
 
-        for (int i = 0; i < TILE_COUNT_X; i++)
+        /*for (int i = 0; i < TILE_COUNT_X; i++)
         {
             chessPieces[i, 6] = SpawnSinglePiece(ChessPieceType.Pawn, blackteam);
-        }
+        }*/
 
         
     }
@@ -289,7 +289,9 @@ public class Chessboard : MonoBehaviour
         ChessPiece cp = Instantiate(prefabs[(int)type - 1], transform).GetComponent<ChessPiece>();
         cp.type = type;
         cp.team = team;
-        cp.GetComponent<MeshRenderer>().material = teamMaterials[((team == 0) ? 0 : 6) + ((int)type - 1)];
+        Material tempMat = teamMaterials[((team == 0) ? 0 : 6) + ((int)type - 1)];
+        cp.GetComponent<MeshRenderer>().material = tempMat;
+        cp.originalMaterial = tempMat;
         return cp; 
 
     }
@@ -776,37 +778,256 @@ public class Chessboard : MonoBehaviour
 
 
     // Stan's Enemy spawning script
- 
-    private void CreateGreyMind1()
+    // vars for the Spawn GreyMind function.
+    public bool pawnInvert = false;
+    public bool lockRook = false;
+    public bool lockBishop = false;
+    public bool lockKnight = false;
+    public bool eldrichBoard = false;
+    public bool spawnEnemy = false;
+    private bool CreateGreyMind()
     {
-        int randomGreyX = UnityEngine.Random.Range(0, 8);
-        int randomGreyY = UnityEngine.Random.Range(2, 6);
-        int eteam = 2;
-        ChessPiece greyMind = SpawnSingleElder(ChessPieceType.GreyMind, eteam);
-        chessPieces[randomGreyX, randomGreyY] = greyMind;
-        PositionSinglePiece(randomGreyX, randomGreyY, true);
-        
-        foreach (ChessPiece currentP in chessPieces)
+        int attempts = 0;
+        int maxAttempts = 100; // Set a limit to avoid potential infinite loops
+        bool placedSuccessfully = false;
+        ///
+        Debug.Log("i have arrived Mortal fleash");
+
+        int randomNumber = UnityEngine.Random.Range(0, 2);
+
+        switch (randomNumber)
         {
-            if (currentP != null)
-            {
-                if (currentP.type == ChessPieceType.Pawn || currentP.type == ChessPieceType.Bishop || currentP.type == ChessPieceType.Knight || currentP.type == ChessPieceType.Rook)
+            case 0:
+                Debug.Log("Random number is 0. Running code A. (pawn switch)");
+                // Run code A
+                pawnInvert = true;
+                foreach (ChessPiece currentP in chessPieces)
                 {
-                    currentP.greyScript = greyMind.GetComponent<GreyMind>();
+                    if (currentP != null)
+                    {
+                        if (currentP.type == ChessPieceType.Pawn)
+                        {
+                            currentP.GetComponent<Pawn>().pawnBackwardMove = true;
+                        }
+                    }
                 }
+                break;
+            case 1:
+                Debug.Log("Random number is 1. Running code B.(locking rook, bishops or knights switch)");
+                // Run code B
+                int randomFreeze = UnityEngine.Random.Range(0, 3);
+                switch (randomFreeze)
+                {
+                    case 0:
+                        {
+                            //run rook
+                            lockRook = true;
+                            foreach (ChessPiece currentP in chessPieces)
+                            {
+                                if (currentP != null)
+                                {
+                                    if (currentP.type == ChessPieceType.Rook)
+                                    {
+                                        currentP.FreezePiece();
+                                    }                                    
+                                }
+                            }
+                        }
+                        break;
+                    case 1:
+                        {
+                            //run bishop
+                            lockBishop = true;
+                            foreach (ChessPiece currentP in chessPieces)
+                            {
+                                if (currentP != null)
+                                {
+                                    if (currentP.type == ChessPieceType.Bishop)
+                                    {
+                                        currentP.FreezePiece();
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    case 2:                        
+                        {
+                            //run knight
+                            lockKnight = true;
+                            foreach (ChessPiece currentP in chessPieces)
+                            {
+                                if (currentP != null)
+                                {
+                                    if (currentP.type == ChessPieceType.Knight)
+                                    {
+                                        currentP.FreezePiece();
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        Debug.LogError("Unexpected random freeze number!");
+                        break;
+                }
+                break;
+            case 2:
+                Debug.Log("Random number is 2. Running code C. (visual effect on board) ");
+                // Run code C
+                eldrichBoard = true;
+
+                break;
+            case 3:
+                Debug.Log("Random number is 3. Running code D. (spawn en enemy unit");
+                // Run code C
+                spawnEnemy = true;
+                break;
+            default:
+                Debug.LogError("Unexpected random number!");
+                break;
+        }
+        ///
+        while (!placedSuccessfully && attempts < maxAttempts)
+        {
+            attempts++;
+            int randomGreyX = UnityEngine.Random.Range(0, 8);
+            int randomGreyY = UnityEngine.Random.Range(2, 6);
+            int eteam = 2;
+            ChessPiece greyMind = SpawnSingleElder(ChessPieceType.GreyMind, eteam);
+            ////
+
+            ////
+            if (chessPieces[randomGreyX, randomGreyY] == null)
+            {
+                chessPieces[randomGreyX, randomGreyY] = greyMind;
+                PositionSinglePiece(randomGreyX, randomGreyY, true);
+                foreach (ChessPiece currentP in chessPieces)
+                {
+                    if (currentP != null)
+                    {
+                        if (currentP.type == ChessPieceType.Pawn || currentP.type == ChessPieceType.Bishop || currentP.type == ChessPieceType.Knight || currentP.type == ChessPieceType.Rook)
+                        {
+                            currentP.greyScript = greyMind.GetComponent<GreyMind>();
+                            
+                        }
+                    }
+                }
+                placedSuccessfully = true;
+            }
+            else
+            {
+                ChessPiece ocp = chessPieces[randomGreyX, randomGreyY];
+
+                if (greyMind.team == ocp.team)
+                {
+                    // If the same team, retry
+                    continue;
+                }
+
+                // If it's the enemy team
+                if (ocp.team == 0)
+                {
+                    if (ocp.type == ChessPieceType.King)
+                        CheckMate(1);
+
+                    deadWhites.Add(ocp);
+                    ocp.SetScale(Vector3.one * deathSize);
+                    ocp.SetPosition(
+                        new Vector3(8 * tileSize, yOffset, -1 * tileSize)
+                        - bounds
+                        + new Vector3(tileSize / 2, 0, tileSize / 2)
+                        + (Vector3.forward * deathSpacing) * deadWhites.Count);
+                }
+                else if (ocp.team == 1)
+                {
+                    if (ocp.type == ChessPieceType.King)
+                        CheckMate(0);
+
+                    deadBlacks.Add(ocp);
+                    ocp.SetScale(Vector3.one * deathSize);
+                    ocp.SetPosition(
+                        new Vector3(-1 * tileSize, yOffset, 8 * tileSize)
+                        - bounds
+                        + new Vector3(tileSize / 2, 0, tileSize / 2)
+                        + (Vector3.back * deathSpacing) * deadBlacks.Count);
+                }
+
+                chessPieces[randomGreyX, randomGreyY] = greyMind;
+                PositionSinglePiece(randomGreyX, randomGreyY, true);
+                foreach (ChessPiece currentP in chessPieces)
+                {
+                    if (currentP != null)
+                    {
+                        if (currentP.type == ChessPieceType.Pawn || currentP.type == ChessPieceType.Bishop || currentP.type == ChessPieceType.Knight || currentP.type == ChessPieceType.Rook)
+                        {
+                            currentP.greyScript = greyMind.GetComponent<GreyMind>();
+                        }
+                    }
+                }
+                placedSuccessfully = true;
             }
         }
-    } // old spawning mechanism
+
+        return placedSuccessfully;
+    }
 
     private void DestroyGreyMind()
     {
-        foreach (ChessPiece currentP in chessPieces)
+        
+        //If you make a tag for bishop, and a tag for rook and whatever, do search by tag and call its unfreeze function, instead of this stupid search
+        if(pawnInvert)
         {
-            if (currentP != null)
+            pawnInvert = false;
+            foreach (ChessPiece currentP in chessPieces)
             {
-                if (currentP.type == ChessPieceType.Pawn || currentP.type == ChessPieceType.Bishop || currentP.type == ChessPieceType.Knight || currentP.type == ChessPieceType.Rook)
+                if (currentP != null)
                 {
-                    currentP.greyScript = null;
+                    if (currentP.type == ChessPieceType.Pawn)
+                    {
+                        currentP.GetComponent<Pawn>().pawnBackwardMove = false;
+                    }
+                }
+            }
+        }
+        if(lockBishop)
+        {
+            lockBishop = false;
+            foreach (ChessPiece currentP in chessPieces)
+            {
+                if (currentP != null)
+                {
+                    if (currentP.type == ChessPieceType.Bishop)
+                    {
+                        currentP.UnFreezePiece();
+                    }
+                }
+            }
+        }
+        if(lockKnight)
+        {
+            lockKnight = false;
+            foreach (ChessPiece currentP in chessPieces)
+            {
+                if (currentP != null)
+                {
+                    if (currentP.type == ChessPieceType.Knight)
+                    {
+                        currentP.UnFreezePiece();
+                    }
+                }
+            }
+        }
+        if(lockRook)
+        {
+            lockRook = false;
+            foreach (ChessPiece currentP in chessPieces)
+            {
+                if (currentP != null)
+                {
+                    if (currentP.type == ChessPieceType.Rook)
+                    {
+                        currentP.UnFreezePiece();
+                    }
                 }
             }
         }
@@ -877,72 +1098,7 @@ public class Chessboard : MonoBehaviour
 
         return placedSuccessfully;
     }
-    private bool CreateGreyMind()
-    {
-        int attempts = 0;
-        int maxAttempts = 100; // Set a limit to avoid potential infinite loops
-        bool placedSuccessfully = false;
-
-        while (!placedSuccessfully && attempts < maxAttempts)
-        {
-            attempts++;
-            int randomGreyX = UnityEngine.Random.Range(0, 8);
-            int randomGreyY = UnityEngine.Random.Range(2, 6);
-            int eteam = 2;
-            ChessPiece greyMind = SpawnSingleElder(ChessPieceType.GreyMind, eteam);
-
-            if (chessPieces[randomGreyX, randomGreyY] == null)
-            {
-                chessPieces[randomGreyX, randomGreyY] = greyMind;
-                PositionSinglePiece(randomGreyX, randomGreyY, true);
-                placedSuccessfully = true;
-            }
-            else
-            {
-                ChessPiece ocp = chessPieces[randomGreyX, randomGreyY];
-
-                if (greyMind.team == ocp.team)
-                {
-                    // If the same team, retry
-                    continue;
-                }
-
-                // If it's the enemy team
-                if (ocp.team == 0)
-                {
-                    if (ocp.type == ChessPieceType.King)
-                        CheckMate(1);
-
-                    deadWhites.Add(ocp);
-                    ocp.SetScale(Vector3.one * deathSize);
-                    ocp.SetPosition(
-                        new Vector3(8 * tileSize, yOffset, -1 * tileSize)
-                        - bounds
-                        + new Vector3(tileSize / 2, 0, tileSize / 2)
-                        + (Vector3.forward * deathSpacing) * deadWhites.Count);
-                }
-                else if (ocp.team == 1)
-                {
-                    if (ocp.type == ChessPieceType.King)
-                        CheckMate(0);
-
-                    deadBlacks.Add(ocp);
-                    ocp.SetScale(Vector3.one * deathSize);
-                    ocp.SetPosition(
-                        new Vector3(-1 * tileSize, yOffset, 8 * tileSize)
-                        - bounds
-                        + new Vector3(tileSize / 2, 0, tileSize / 2)
-                        + (Vector3.back * deathSpacing) * deadBlacks.Count);
-                }
-
-                chessPieces[randomGreyX, randomGreyY] = greyMind;
-                PositionSinglePiece(randomGreyX, randomGreyY, true);
-                placedSuccessfully = true;
-            }
-        }
-
-        return placedSuccessfully;
-    }
+ 
     private void RedMoves()
     {
        //Debug.Log("first part of REDMoves");
