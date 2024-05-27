@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using Random = UnityEngine.Random;
 
 public enum SpecialMove
 {
@@ -68,7 +69,9 @@ public class Chessboard : MonoBehaviour
     //Coin stuff
     public GameObject Coin;
     public Vector3 coinSpawnLocation;
+    public Vector3 range;
     public Quaternion spawnRotation;
+    public Vector3 angularVelocity;
 
 
 
@@ -184,7 +187,8 @@ public class Chessboard : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.N))
         {
-            CreateRedDog();
+            //CreateRedDog();
+            SpawnCoin();
         }
 
         if(greyturnCounter >= greyEveryXTurns && greyAlive == false)
@@ -989,7 +993,7 @@ public class Chessboard : MonoBehaviour
         greyturnCounter = 0;
         killCounter++;
         greyAlive = false;
-        Instantiate(Coin, coinSpawnLocation, spawnRotation);
+        SpawnCoin();
         Debug.Log("grey is Alive bool is set to" + greyAlive);
         //If you make a tag for bishop, and a tag for rook and whatever, do search by tag and call its unfreeze function, instead of this stupid search
         if (pawnInvert)
@@ -1132,6 +1136,13 @@ public class Chessboard : MonoBehaviour
 
     private void SpawnCoin()
     {
-
+        Vector3 randomPosition = new Vector3(
+                Random.Range(coinSpawnLocation.x - range.x, coinSpawnLocation.x + range.x),
+                Random.Range(coinSpawnLocation.y - range.y, coinSpawnLocation.y + range.y),
+                Random.Range(coinSpawnLocation.z - range.z, coinSpawnLocation.z + range.z)
+            );
+        GameObject InstantCoin = Instantiate(Coin, randomPosition, spawnRotation);
+        Rigidbody rb = InstantCoin.GetComponent<Rigidbody>();
+        rb.angularVelocity = angularVelocity;
     }
 } 
