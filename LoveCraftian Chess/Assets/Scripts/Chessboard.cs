@@ -51,7 +51,7 @@ public class Chessboard : MonoBehaviour
     public CameraMovements camScript;
 
     //Stan's Enemy stuff
-    private List<ChessPiece> deadElders = new List<ChessPiece>();
+    
 
     // counters
     public int turnNumber = 1;
@@ -59,10 +59,13 @@ public class Chessboard : MonoBehaviour
     public int enemyturnCounter = 0;
     public int killCounter = 0;
     // designer edited
-    public int greyEveryXTurns = 5;
+    public int greyEveryXTurns = 4;
     public int EnemyEveryXTurns = 2;
 
-    
+    //Coin stuff
+    public GameObject Coin;
+    public Vector3 coinSpawnLocation;
+    public Quaternion spawnRotation;
 
 
 
@@ -769,8 +772,7 @@ public class Chessboard : MonoBehaviour
     }
 
 
-    // Stan's Enemy spawning script
-    // vars for the Spawn GreyMind function.
+    // Stan's Enemy spawning script - vars for the Spawn GreyMind function.
     public bool pawnInvert = false;
     public bool lockRook = false;
     public bool lockBishop = false;
@@ -980,6 +982,7 @@ public class Chessboard : MonoBehaviour
         greyturnCounter = 0;
         killCounter++;
         greyAlive = false;
+        Instantiate(Coin, coinSpawnLocation, spawnRotation);
         Debug.Log("grey is Alive bool is set to" + greyAlive);
         //If you make a tag for bishop, and a tag for rook and whatever, do search by tag and call its unfreeze function, instead of this stupid search
         if (pawnInvert)
@@ -1118,5 +1121,10 @@ public class Chessboard : MonoBehaviour
                // Debug.Log("Red Moved");
             }
         }
+    }
+
+    private void SpawnCoin()
+    {
+
     }
 } 
