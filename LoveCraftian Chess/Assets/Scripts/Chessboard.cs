@@ -53,8 +53,8 @@ public class Chessboard : MonoBehaviour
     public CameraMovements camScript;
 
     //Stan's Enemy stuff
-    
 
+    [Header("Counters")]
     // counters
     public int turnNumber = 1;
     public int greyturnCounter = 0;
@@ -66,12 +66,21 @@ public class Chessboard : MonoBehaviour
     public int greyEveryXTurns = 4;
     public int EnemyEveryXTurns = 2;
 
+    [Header("Coin Related")]
     //Coin stuff
     public GameObject Coin;
     public Vector3 coinSpawnLocation;
     public Vector3 range;
     public Quaternion spawnRotation;
     public Vector3 angularVelocity;
+
+
+    [Header("Sound Effects")]
+    // Array to hold sound effects
+    public AudioClip[] greySpawningSounds;
+
+    // Reference to the AudioSource component
+    private AudioSource audioSource;
 
 
 
@@ -84,6 +93,7 @@ public class Chessboard : MonoBehaviour
         //Finding camera and assigning script to camScript
         GameObject camera = GameObject.Find("Main Camera");
         camScript = camera.GetComponent<CameraMovements>();
+        audioSource = GetComponent<AudioSource>();
 
         GenerateAllTiles(tileSize, TILE_COUNT_X, TILE_COUNT_Y);
         SpawnAllPieces();
@@ -922,6 +932,7 @@ public class Chessboard : MonoBehaviour
                 placedSuccessfully = true;
                 greyAlive = true;
                 Debug.Log("grey is Alive bool is set to" + greyAlive);
+                PlayGreySpawnSounds();
 
             }
             else
@@ -978,6 +989,7 @@ public class Chessboard : MonoBehaviour
                 placedSuccessfully = true;
                 greyAlive = true;
                 Debug.Log("grey is Alive bool is set to" + greyAlive);
+                PlayGreySpawnSounds();
             }
         }
 
@@ -1144,5 +1156,23 @@ public class Chessboard : MonoBehaviour
         GameObject InstantCoin = Instantiate(Coin, randomPosition, spawnRotation);
         Rigidbody rb = InstantCoin.GetComponent<Rigidbody>();
         rb.angularVelocity = angularVelocity;
+    }
+
+    private void PlayGreySpawnSounds()
+    {
+        if (greySpawningSounds.Length > 0)
+        {
+            // Select a random sound effect from the array
+            int randomIndex = Random.Range(0, greySpawningSounds.Length);
+            AudioClip randomClip = greySpawningSounds[randomIndex];
+
+            // Set the selected sound effect to the AudioSource and play it
+            audioSource.clip = randomClip;
+            audioSource.Play();
+        }
+        else
+        {
+            Debug.LogWarning("No sound effects assigned to the soundEffects array.");
+        }
     }
 } 
