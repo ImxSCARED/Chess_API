@@ -18,7 +18,7 @@ public class Rook : ChessPiece
 
         if (isFrozen)
         {
-            Debug.Log("rook frozen bool activated");
+            //Debug.Log("rook frozen bool activated");
         }
         else
         {

@@ -32,7 +32,7 @@ public class ChessPiece : MonoBehaviour
     private Vector3 desiredScale = Vector3.one;
 
     public GreyMind greyScript;
-    private Chessboard chessScript;
+    //private Chessboard chessScript;
 
     private void Start()
     {

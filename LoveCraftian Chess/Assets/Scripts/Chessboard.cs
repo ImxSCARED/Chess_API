@@ -55,11 +55,12 @@ public class Chessboard : MonoBehaviour
 
     // counters
     public int turnNumber = 1;
-    public int greyturnCounter = 1;
-    public int enemyturnCounter = 1;
+    public int greyturnCounter = 0;
+    public int enemyturnCounter = 0;
+    public int killCounter = 0;
     // designer edited
-    public int greyTurnEveryX = 4;
-    public int enemySpawnEveryX = 2;
+    public int greyEveryXTurns = 5;
+    public int EnemyEveryXTurns = 2;
 
     
 
@@ -180,19 +181,11 @@ public class Chessboard : MonoBehaviour
             CreateRedDog();
         }
 
-        if (Input.GetKeyDown(KeyCode.L))
+        if(greyturnCounter >= greyEveryXTurns && greyAlive == false)
         {
-            foreach( var item in chessPieces)
-            {
-                Debug.Log(item);
-            }
+            CreateGreyMind();
+            greyturnCounter = 0;
         }
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-           
-        }
-        
-
     }
 
 
@@ -706,12 +699,10 @@ public class Chessboard : MonoBehaviour
                 {
                     DestroyGreyMind();
                     Destroy(ocp.gameObject);
-
                 }
                 if (ocp.transform.CompareTag("RedDog") || ocp.transform.CompareTag("YellowMind"))
                 {
                     Destroy(ocp.gameObject);
-
                 }
             } // this is the grey mind kill scirpt
         }
@@ -726,6 +717,7 @@ public class Chessboard : MonoBehaviour
 
         turnNumber++;
         greyturnCounter++;
+        Debug.Log(greyturnCounter);
 
         //Debug.Log("Turn Number: " + turnNumber);
         
@@ -785,6 +777,8 @@ public class Chessboard : MonoBehaviour
     public bool lockKnight = false;
     public bool eldrichBoard = false;
     public bool spawnEnemy = false;
+    // 
+    public bool greyAlive = false;
     private bool CreateGreyMind()
     {
         int attempts = 0;
@@ -913,6 +907,9 @@ public class Chessboard : MonoBehaviour
                     }
                 }
                 placedSuccessfully = true;
+                greyAlive = true;
+                Debug.Log("grey is Alive bool is set to" + greyAlive);
+
             }
             else
             {
@@ -961,21 +958,31 @@ public class Chessboard : MonoBehaviour
                         if (currentP.type == ChessPieceType.Pawn || currentP.type == ChessPieceType.Bishop || currentP.type == ChessPieceType.Knight || currentP.type == ChessPieceType.Rook)
                         {
                             currentP.greyScript = greyMind.GetComponent<GreyMind>();
+                            
                         }
                     }
                 }
                 placedSuccessfully = true;
+                greyAlive = true;
+                Debug.Log("grey is Alive bool is set to" + greyAlive);
             }
         }
 
         return placedSuccessfully;
+        
+
+        
+
     }
 
     private void DestroyGreyMind()
     {
-        
+        greyturnCounter = 0;
+        killCounter++;
+        greyAlive = false;
+        Debug.Log("grey is Alive bool is set to" + greyAlive);
         //If you make a tag for bishop, and a tag for rook and whatever, do search by tag and call its unfreeze function, instead of this stupid search
-        if(pawnInvert)
+        if (pawnInvert)
         {
             pawnInvert = false;
             foreach (ChessPiece currentP in chessPieces)

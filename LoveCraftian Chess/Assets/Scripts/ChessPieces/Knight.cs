@@ -10,7 +10,7 @@ public class Knight : ChessPiece
 
         if (isFrozen)
         {
-            Debug.Log("knight frozen bool activated");
+           // Debug.Log("knight frozen bool activated");
         }
         else
         {

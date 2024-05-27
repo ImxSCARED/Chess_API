@@ -64,11 +64,11 @@ MonoBehaviour:
   currentX: 0
   currentY: 0
   type: 0
+  materialPath: FrozenMat/Cosmos
+  originalMaterial: {fileID: 0}
+  isFrozen: 0
   greyScript: {fileID: 0}
-  Grey1: 0
-  Grey2: 0
-  Grey3: 0
-  Grey4: 0
+  greyAlive: 0
 --- !u!1001 &3970115368958022577
 PrefabInstance:
   m_ObjectHideFlags: 0
