@@ -115,9 +115,9 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!65 &1719043560
-BoxCollider:
+  m_CollisionDetection: 1
+--- !u!64 &5865325697111161347
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -126,9 +126,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.057619367, y: 0.05734996, z: 0.00535674}
-  m_Center: {x: -0.00000047683716, y: 0, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 3887683042572766240, guid: 97a5743f0058c634b8af513b2c4fd813, type: 3}
 --- !u!108 &1719043562
 Light:
   m_ObjectHideFlags: 0
