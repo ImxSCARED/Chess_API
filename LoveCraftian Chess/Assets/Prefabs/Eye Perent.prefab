@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetCamera: {fileID: 0}
+  rotationSpeed: 1
 --- !u!1001 &3491805887351588976
 PrefabInstance:
   m_ObjectHideFlags: 0
