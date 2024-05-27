@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public enum SpecialMove
@@ -58,6 +59,8 @@ public class Chessboard : MonoBehaviour
     public int greyturnCounter = 0;
     public int enemyturnCounter = 0;
     public int killCounter = 0;
+    public int killCounterMax = 7;
+    
     // designer edited
     public int greyEveryXTurns = 4;
     public int EnemyEveryXTurns = 2;
@@ -720,6 +723,10 @@ public class Chessboard : MonoBehaviour
 
         turnNumber++;
         greyturnCounter++;
+        if(killCounter >= killCounterMax)
+        {
+            SceneManager.LoadScene("Victory Screen");
+        }
         Debug.Log(greyturnCounter);
 
         //Debug.Log("Turn Number: " + turnNumber);
