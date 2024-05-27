@@ -17,7 +17,7 @@ public class Timer : MonoBehaviour
     {
         float t = Time.time - startTime;
         //string minutes = ((int)t / 60).ToString();
-        string seconds = (t % 60).ToString("f2");
+        string seconds = (t % 100000).ToString("f2");
         timerText.text = "time:" + seconds;
     }
 }

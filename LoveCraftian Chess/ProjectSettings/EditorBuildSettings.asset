@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Brian's Scene.unity
     guid: efc533335314af64e9ff170dc513a9b4
+  - enabled: 1
+    path: Assets/Scenes/Victory Screen.unity
+    guid: 791e2c1098342be41b486c94eb3a7a13
   m_configObjects: {}
