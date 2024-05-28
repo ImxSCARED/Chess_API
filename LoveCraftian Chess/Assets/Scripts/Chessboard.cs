@@ -799,7 +799,7 @@ public class Chessboard : MonoBehaviour
     public bool lockRook = false;
     public bool lockBishop = false;
     public bool lockKnight = false;
-    public bool eldrichBoard = false;
+    public bool burnUnit = false;
     public bool spawnEnemy = false;
     // 
     public bool greyAlive = false;
@@ -890,9 +890,9 @@ public class Chessboard : MonoBehaviour
                 }
                 break;
             case 2:
-                Debug.Log("Random number is 2. Running code C. (visual effect on board) ");
+                Debug.Log("Random number is 2. Running code C. (burns a unit) ");
                 // Run code C
-                eldrichBoard = true;
+                burnUnit = true;
 
                 break;
             case 3:
@@ -1169,7 +1169,7 @@ public class Chessboard : MonoBehaviour
 
             // Set the selected sound effect to the AudioSource and play it
             audioSource.clip = randomClip;
-            myMixer.SetFloat("Music", Mathf.Log10(-deafenAudioAmount/1000));
+           // myMixer.SetFloat("Music", Mathf.Log10(-deafenAudioAmount/1000));
             audioSource.Play();
 
         }
