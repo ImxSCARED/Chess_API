@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Audio;
 using Random = UnityEngine.Random;
+using UnityEngine.UI;
+using UnityEngine.Rendering;
+using System.Collections;
 
 public enum SpecialMove
 {
@@ -79,11 +82,13 @@ public class Chessboard : MonoBehaviour
     public AudioClip[] greySpawningSounds;
     public float deafenAudioAmount = -9f;
     [SerializeField] private float volumeDecreaseAmount;
+    [SerializeField] private float volumeIncreaseAmount;
 
     // Reference to the AudioSource component
     private AudioSource audioSource;
-    [SerializeField] private AudioMixer myMixer;
 
+    [SerializeField] private AudioMixer myMixer;
+    [SerializeField] private Slider musicSliderDeafault;
 
 
     /// //////////////
@@ -208,7 +213,15 @@ public class Chessboard : MonoBehaviour
             CreateGreyMind();
             greyturnCounter = 0;
         }
+
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            float volume1 = musicSliderDeafault.value;
+            myMixer.SetFloat("Music", Mathf.Log10(volume1) * 20);
+        }
+
     }
+   
 
 
     // Generate the Board
@@ -1180,5 +1193,9 @@ public class Chessboard : MonoBehaviour
         {
             Debug.LogWarning("No sound effects assigned to the soundEffects array.");
         }
+
+     
     }
+
+
 } 
