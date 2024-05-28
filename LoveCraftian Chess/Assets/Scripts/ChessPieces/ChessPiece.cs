@@ -25,6 +25,7 @@ public class ChessPiece : MonoBehaviour
     public ChessPieceType type;
 
     public string materialPath = "FrozenMat/Cosmos";
+    public string materialPath1 = "PawnMat/Invert";
     public Material originalMaterial;
 
     public bool isFrozen = false; //Only use on bishop, Rook, Knight to stop their movement
@@ -101,7 +102,46 @@ public class ChessPiece : MonoBehaviour
         }
         else
         {
+
+        }
+        {
             Debug.Log("Trying to unfreeze a piece that cant unfreeze fucking idiot");
         }
     }
+
+    ////////
+
+    public void ColorPiece()
+    {
+        if (type == ChessPieceType.Pawn)
+        {
+            
+            Material[] mats = gameObject.GetComponent<Renderer>().materials;
+            mats[0] = Resources.Load<Material>(materialPath1);
+            gameObject.GetComponent<Renderer>().materials = mats;
+        }
+        else
+        {
+            Debug.Log("Trying to color a piece that cant color fucking idiot");
+        }
+    }
+
+    public void UnColorPiece()
+    {
+        if (type == ChessPieceType.Pawn)
+        {
+            
+            gameObject.GetComponent<Renderer>().material = originalMaterial;
+        }
+        else
+        {
+
+        }
+        {
+            Debug.Log("Trying to uncolor a piece that cant uncolor fucking idiot");
+        }
+    }
+
+
+
 }
