@@ -83,7 +83,7 @@ public class Chessboard : MonoBehaviour
     // Array to hold sound effects
     public AudioClip[] greySpawningSounds;
     public AudioClip[] greyDeathSounds;
-    public AudioClip[] GreyFreezeSounds;
+    public AudioClip[] greyFreezeSounds;
     public AudioClip[] fireDeathSounds;
 
     public AudioClip[] redSpawningSounds;
@@ -363,8 +363,7 @@ public class Chessboard : MonoBehaviour
                 // Change the light for freeze
                 lightComponent.color = Color.blue;
                 lightComponent.intensity = 100f;
-            }
-            
+            }     
             if (effectcolor == 2)
             {
                 // Change the light for Burn effect
@@ -822,7 +821,7 @@ public class Chessboard : MonoBehaviour
         else
         {
             Debug.Log("Black Turn");
-            RedMoves();
+            //RedMoves();
         }
         
         
@@ -885,6 +884,7 @@ public class Chessboard : MonoBehaviour
             case 0:
                 Debug.Log("Random number is 0. Running code A. (pawn switch)");
                 // Run code A
+                StartCoroutine(PlayGreySpawnSounds());
                 effectcolor = 0;
                 pawnInvert = true;
                 foreach (ChessPiece currentP in chessPieces)
@@ -894,12 +894,14 @@ public class Chessboard : MonoBehaviour
                         if (currentP.type == ChessPieceType.Pawn)
                         {
                             currentP.GetComponent<Pawn>().pawnBackwardMove = true;
+                            currentP.ColorPiece();
                         }
                     }
                 }
                 break;
             case 1:
                 Debug.Log("Random number is 1. Running code B.(locking rook, bishops or knights switch)");
+                StartCoroutine(PlayGreyFreezeSounds());
                 effectcolor = 1;
                 int randomFreeze = Random.Range(0, 3);
                 switch (randomFreeze)
@@ -980,7 +982,6 @@ public class Chessboard : MonoBehaviour
             int randomGreyX = Random.Range(0, 8);
             int randomGreyY = Random.Range(2, 6);
             int eteam = 2;
-            //ChessPiece greyMind = SpawnSingleElder(ChessPieceType.GreyMind, eteam);
             ChessPiece greyMind = SpawnSingleGreyMind(ChessPieceType.GreyMind, eteam);
             ////
 
@@ -1003,7 +1004,7 @@ public class Chessboard : MonoBehaviour
                 placedSuccessfully = true;
                 greyAlive = true;
                 Debug.Log("grey is Alive bool is set to" + greyAlive);
-                StartCoroutine(PlayGreySpawnSounds());
+                //StartCoroutine(PlayGreySpawnSounds());
 
             }
             else
@@ -1060,7 +1061,7 @@ public class Chessboard : MonoBehaviour
                 placedSuccessfully = true;
                 greyAlive = true;
                 Debug.Log("grey is Alive bool is set to" + greyAlive);
-                StartCoroutine(PlayGreySpawnSounds());
+                //StartCoroutine(PlayGreySpawnSounds());
             }
         }
 
@@ -1077,7 +1078,7 @@ public class Chessboard : MonoBehaviour
         killCounter++;
         greyAlive = false;
         SpawnCoin();
-        Debug.Log("grey is Alive bool is set to" + greyAlive);
+        StartCoroutine(PlayGreyDeathSounds());
         //If you make a tag for bishop, and a tag for rook and whatever, do search by tag and call its unfreeze function, instead of this stupid search
         if (pawnInvert)
         {
@@ -1089,6 +1090,7 @@ public class Chessboard : MonoBehaviour
                     if (currentP.type == ChessPieceType.Pawn)
                     {
                         currentP.GetComponent<Pawn>().pawnBackwardMove = false;
+                        currentP.UnColorPiece();
                     }
                 }
             }
@@ -1145,8 +1147,8 @@ public class Chessboard : MonoBehaviour
         while (!placedSuccessfully && attempts < maxAttempts)
         {
             attempts++;
-            int randomRedX = UnityEngine.Random.Range(0, 8);
-            int randomRedY = UnityEngine.Random.Range(2, 6);
+            int randomRedX = Random.Range(0, 8);
+            int randomRedY = Random.Range(2, 6);
             int eteam = 2;
             ChessPiece redDog = SpawnSingleElder(ChessPieceType.RedDog, eteam);
 
@@ -1205,16 +1207,7 @@ public class Chessboard : MonoBehaviour
  
     private void RedMoves()
     {
-       //Debug.Log("first part of REDMoves");
-       foreach (ChessPiece thePiece in chessPieces)
-        {
-           // Debug.Log("second part of REDMoves");
-            if (thePiece is RedDog red)
-            {
-                // add move code here
-               // Debug.Log("Red Moved");
-            }
-        }
+     
     }
 
     private void SpawnCoin()
@@ -1228,31 +1221,6 @@ public class Chessboard : MonoBehaviour
         Rigidbody rb = InstantCoin.GetComponent<Rigidbody>();
         rb.angularVelocity = angularVelocity;
     }
-
-    private void PlayGreySpawnSound1()
-    {
-        if (greySpawningSounds.Length > 0)
-        {
-            // Select a random sound effect from the array
-            int randomIndex = Random.Range(0, greySpawningSounds.Length);
-            AudioClip randomClip = greySpawningSounds[randomIndex];
-
-            // Set the selected sound effect to the AudioSource and play it
-            audioSource.clip = randomClip;
-            myMixer.SetFloat("Music", deafenAudioAmount / -9f * volumeDecreaseAmount);
-            
-            audioSource.Play();
-            
-
-        }
-        else
-        {
-            Debug.LogWarning("No sound effects assigned to the soundEffects array.");
-        }
-
-     
-    }
-
 
     IEnumerator PlayGreySpawnSounds()
     {
@@ -1275,6 +1243,66 @@ public class Chessboard : MonoBehaviour
             Debug.LogWarning("No sound effects assigned to the soundEffects array.");
         }
         
+        while (audioSource.isPlaying)
+        {
+            yield return null;
+        }
+
+        float volume1 = musicSliderDeafault.value;
+        myMixer.SetFloat("Music", Mathf.Log10(volume1) * 20);
+    }
+    IEnumerator PlayGreyDeathSounds()
+    {
+        if (greyDeathSounds.Length > 0)
+        {
+            // Select a random sound effect from the array
+            int randomIndex = Random.Range(0, greyDeathSounds.Length);
+            AudioClip randomClip = greyDeathSounds[randomIndex];
+
+            // Set the selected sound effect to the AudioSource and play it
+            audioSource.clip = randomClip;
+            myMixer.SetFloat("Music", deafenAudioAmount / -9f * volumeDecreaseAmount);
+
+            audioSource.Play();
+
+
+        }
+        else
+        {
+            Debug.LogWarning("No sound effects assigned to the soundEffects array.");
+        }
+
+        while (audioSource.isPlaying)
+        {
+            yield return null;
+        }
+
+        float volume1 = musicSliderDeafault.value;
+        myMixer.SetFloat("Music", Mathf.Log10(volume1) * 20);
+    }
+
+    IEnumerator PlayGreyFreezeSounds()
+    {
+        if (greyFreezeSounds.Length > 0)
+        {
+            Debug.Log("The Free Sound effect is activated");
+            // Select a random sound effect from the array
+            int randomIndex = Random.Range(0, greyFreezeSounds.Length);
+            AudioClip randomClip = greyFreezeSounds[randomIndex];
+
+            // Set the selected sound effect to the AudioSource and play it
+            audioSource.clip = randomClip;
+            myMixer.SetFloat("Music", deafenAudioAmount / -9f * volumeDecreaseAmount);
+
+            audioSource.Play();
+
+
+        }
+        else
+        {
+            Debug.LogWarning("No sound effects assigned to the soundEffects array.");
+        }
+
         while (audioSource.isPlaying)
         {
             yield return null;
