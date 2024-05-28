@@ -77,7 +77,8 @@ public class Chessboard : MonoBehaviour
     [Header("Sound Effects")]
     // Array to hold sound effects
     public AudioClip[] greySpawningSounds;
-    public float deafenAudioAmount = 1.0f;
+    public float deafenAudioAmount = -9f;
+    [SerializeField] private float volumeDecreaseAmount;
 
     // Reference to the AudioSource component
     private AudioSource audioSource;
@@ -1169,8 +1170,10 @@ public class Chessboard : MonoBehaviour
 
             // Set the selected sound effect to the AudioSource and play it
             audioSource.clip = randomClip;
-            myMixer.SetFloat("Music", Mathf.Log10(-deafenAudioAmount/1000));
+            myMixer.SetFloat("Music", deafenAudioAmount / -9f * volumeDecreaseAmount);
+            //myMixer.SetFloat("Music", Mathf.Log10(deafenAudioAmount) * 20);
             audioSource.Play();
+            
 
         }
         else
