@@ -197,7 +197,7 @@ GameObject:
   - component: {fileID: 8945211782912791365}
   - component: {fileID: 7935687326589788925}
   m_Layer: 0
-  m_Name: GameObject (1)
+  m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -229,9 +229,9 @@ Light:
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0
-  m_Color: {r: 0.08370417, g: 0.08370417, b: 0.103773594, a: 1}
-  m_Intensity: 1000
-  m_Range: 2.2331228
+  m_Color: {r: 0, g: 0.3174214, b: 0.3764706, a: 1}
+  m_Intensity: 100
+  m_Range: 1.03
   m_SpotAngle: 179
   m_InnerSpotAngle: 0
   m_CookieSize: 10
@@ -272,7 +272,7 @@ Light:
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
+  m_BounceIntensity: 0
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}

@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.Rendering;
 using System.Collections;
 using System.Runtime.InteropServices.WindowsRuntime;
+using UnityEngine.Experimental.GlobalIllumination;
 
 public enum SpecialMove
 {
@@ -87,9 +88,10 @@ public class Chessboard : MonoBehaviour
 
     public AudioClip[] redSpawningSounds;
     public AudioClip[] redDeathSounds;
-    
-   
 
+
+    public GameObject pointLightRef;
+    private int effectcolor;
     ///
     public float deafenAudioAmount = -9f;
     [SerializeField] private float volumeDecreaseAmount;
@@ -341,8 +343,49 @@ public class Chessboard : MonoBehaviour
         cp.team = team;
        
         return cp;
-
     }
+    private ChessPiece SpawnSingleGreyMind(ChessPieceType type, int team)
+    {
+        ChessPiece cp = Instantiate(prefabs[(int)type - 1], transform).GetComponent<ChessPiece>();
+        Transform childTransform = cp.transform.Find("Point Light");
+        //= GetComponentInChildren<Light>();
+        Light lightComponent = childTransform.GetComponent<Light>();
+        if (lightComponent != null)
+        {
+            if (effectcolor == 0)
+            {
+                // Change the light for pawn invert
+                lightComponent.color = new Color(0f,0.81f, 0.96f);
+                lightComponent.intensity = 25f;
+            }
+            if (effectcolor == 1)
+            {
+                // Change the light for freeze
+                lightComponent.color = Color.blue;
+                lightComponent.intensity = 100f;
+            }
+            
+            if (effectcolor == 2)
+            {
+                // Change the light for Burn effect
+                lightComponent.color = Color.red;
+                lightComponent.intensity = 100f;
+
+            }
+            if (effectcolor == 3)
+            {
+                // Change the light for pawn invert
+                lightComponent.color = new Color(0.96f, 0.5f, 0f);
+                lightComponent.intensity = 25f;// Change the light for spawner
+            }
+
+        }
+        cp.type = type;
+        cp.team = team;
+
+        return cp;
+    }
+
 
     // Positioning
     private void PositionAllpieces()
@@ -823,7 +866,7 @@ public class Chessboard : MonoBehaviour
     public bool lockRook = false;
     public bool lockBishop = false;
     public bool lockKnight = false;
-    public bool eldrichBoard = false;
+    public bool elderBurn = false;
     public bool spawnEnemy = false;
     // 
     public bool greyAlive = false;
@@ -842,6 +885,7 @@ public class Chessboard : MonoBehaviour
             case 0:
                 Debug.Log("Random number is 0. Running code A. (pawn switch)");
                 // Run code A
+                effectcolor = 0;
                 pawnInvert = true;
                 foreach (ChessPiece currentP in chessPieces)
                 {
@@ -856,8 +900,8 @@ public class Chessboard : MonoBehaviour
                 break;
             case 1:
                 Debug.Log("Random number is 1. Running code B.(locking rook, bishops or knights switch)");
-                // Run code B
-                int randomFreeze = UnityEngine.Random.Range(0, 3);
+                effectcolor = 1;
+                int randomFreeze = Random.Range(0, 3);
                 switch (randomFreeze)
                 {
                     case 0:
@@ -914,14 +958,15 @@ public class Chessboard : MonoBehaviour
                 }
                 break;
             case 2:
-                Debug.Log("Random number is 2. Running code C. (visual effect on board) ");
-                // Run code C
-                eldrichBoard = true;
+                Debug.Log("Random number is 2. Running code C. (Burn Effect) ");
+                effectcolor = 2;
+                elderBurn = true;
 
                 break;
             case 3:
                 Debug.Log("Random number is 3. Running code D. (spawn en enemy unit");
                 // Run code C
+                effectcolor = 3;
                 spawnEnemy = true;
                 break;
             default:
@@ -935,7 +980,8 @@ public class Chessboard : MonoBehaviour
             int randomGreyX = Random.Range(0, 8);
             int randomGreyY = Random.Range(2, 6);
             int eteam = 2;
-            ChessPiece greyMind = SpawnSingleElder(ChessPieceType.GreyMind, eteam);
+            //ChessPiece greyMind = SpawnSingleElder(ChessPieceType.GreyMind, eteam);
+            ChessPiece greyMind = SpawnSingleGreyMind(ChessPieceType.GreyMind, eteam);
             ////
 
             ////
