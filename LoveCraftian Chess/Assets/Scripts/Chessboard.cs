@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
+using UnityEngine.Audio;
 using Random = UnityEngine.Random;
 
 public enum SpecialMove
@@ -78,9 +77,11 @@ public class Chessboard : MonoBehaviour
     [Header("Sound Effects")]
     // Array to hold sound effects
     public AudioClip[] greySpawningSounds;
+    public float deafenAudioAmount = 1.0f;
 
     // Reference to the AudioSource component
     private AudioSource audioSource;
+    [SerializeField] private AudioMixer myMixer;
 
 
 
@@ -1168,7 +1169,9 @@ public class Chessboard : MonoBehaviour
 
             // Set the selected sound effect to the AudioSource and play it
             audioSource.clip = randomClip;
+            myMixer.SetFloat("Music", Mathf.Log10(-deafenAudioAmount/1000));
             audioSource.Play();
+
         }
         else
         {
