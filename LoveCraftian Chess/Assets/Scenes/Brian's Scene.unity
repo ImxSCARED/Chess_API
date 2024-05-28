@@ -8477,8 +8477,16 @@ PrefabInstance:
       value: 3.09
       objectReference: {fileID: 0}
     - target: {fileID: 1720471477, guid: 5b856ec4f8f8cb84f861f8f8a026c288, type: 3}
+      propertyPath: musicSliderDeafault
+      value: 
+      objectReference: {fileID: 1683399641}
+    - target: {fileID: 1720471477, guid: 5b856ec4f8f8cb84f861f8f8a026c288, type: 3}
       propertyPath: volumeDecreaseAmount
       value: -13
+      objectReference: {fileID: 0}
+    - target: {fileID: 1720471477, guid: 5b856ec4f8f8cb84f861f8f8a026c288, type: 3}
+      propertyPath: volumeIncreaseAmount
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 1720471477, guid: 5b856ec4f8f8cb84f861f8f8a026c288, type: 3}
       propertyPath: prefabs.Array.data[6]
