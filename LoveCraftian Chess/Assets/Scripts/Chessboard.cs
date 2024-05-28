@@ -7,6 +7,7 @@ using Random = UnityEngine.Random;
 using UnityEngine.UI;
 using UnityEngine.Rendering;
 using System.Collections;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 public enum SpecialMove
 {
@@ -80,6 +81,16 @@ public class Chessboard : MonoBehaviour
     [Header("Sound Effects")]
     // Array to hold sound effects
     public AudioClip[] greySpawningSounds;
+    public AudioClip[] greyDeathSounds;
+    public AudioClip[] GreyFreezeSounds;
+    public AudioClip[] fireDeathSounds;
+
+    public AudioClip[] redSpawningSounds;
+    public AudioClip[] redDeathSounds;
+    
+   
+
+    ///
     public float deafenAudioAmount = -9f;
     [SerializeField] private float volumeDecreaseAmount;
     [SerializeField] private float volumeIncreaseAmount;
@@ -366,7 +377,6 @@ public class Chessboard : MonoBehaviour
 
         availableMoves.Clear();
     }
-
 
     // Checkmate
     private void CheckMate(int team)
@@ -922,8 +932,8 @@ public class Chessboard : MonoBehaviour
         while (!placedSuccessfully && attempts < maxAttempts)
         {
             attempts++;
-            int randomGreyX = UnityEngine.Random.Range(0, 8);
-            int randomGreyY = UnityEngine.Random.Range(2, 6);
+            int randomGreyX = Random.Range(0, 8);
+            int randomGreyY = Random.Range(2, 6);
             int eteam = 2;
             ChessPiece greyMind = SpawnSingleElder(ChessPieceType.GreyMind, eteam);
             ////
@@ -947,7 +957,7 @@ public class Chessboard : MonoBehaviour
                 placedSuccessfully = true;
                 greyAlive = true;
                 Debug.Log("grey is Alive bool is set to" + greyAlive);
-                PlayGreySpawnSounds();
+                StartCoroutine(PlayGreySpawnSounds());
 
             }
             else
@@ -1004,7 +1014,7 @@ public class Chessboard : MonoBehaviour
                 placedSuccessfully = true;
                 greyAlive = true;
                 Debug.Log("grey is Alive bool is set to" + greyAlive);
-                PlayGreySpawnSounds();
+                StartCoroutine(PlayGreySpawnSounds());
             }
         }
 
@@ -1173,7 +1183,7 @@ public class Chessboard : MonoBehaviour
         rb.angularVelocity = angularVelocity;
     }
 
-    private void PlayGreySpawnSounds()
+    private void PlayGreySpawnSound1()
     {
         if (greySpawningSounds.Length > 0)
         {
@@ -1184,7 +1194,7 @@ public class Chessboard : MonoBehaviour
             // Set the selected sound effect to the AudioSource and play it
             audioSource.clip = randomClip;
             myMixer.SetFloat("Music", deafenAudioAmount / -9f * volumeDecreaseAmount);
-            //myMixer.SetFloat("Music", Mathf.Log10(deafenAudioAmount) * 20);
+            
             audioSource.Play();
             
 
@@ -1198,4 +1208,33 @@ public class Chessboard : MonoBehaviour
     }
 
 
+    IEnumerator PlayGreySpawnSounds()
+    {
+        if (greySpawningSounds.Length > 0)
+        {
+            // Select a random sound effect from the array
+            int randomIndex = Random.Range(0, greySpawningSounds.Length);
+            AudioClip randomClip = greySpawningSounds[randomIndex];
+
+            // Set the selected sound effect to the AudioSource and play it
+            audioSource.clip = randomClip;
+            myMixer.SetFloat("Music", deafenAudioAmount / -9f * volumeDecreaseAmount);
+
+            audioSource.Play();
+
+
+        }
+        else
+        {
+            Debug.LogWarning("No sound effects assigned to the soundEffects array.");
+        }
+        
+        while (audioSource.isPlaying)
+        {
+            yield return null;
+        }
+
+        float volume1 = musicSliderDeafault.value;
+        myMixer.SetFloat("Music", Mathf.Log10(volume1) * 20);
+    }
 } 
