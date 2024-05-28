@@ -77,7 +77,8 @@ public class Chessboard : MonoBehaviour
     [Header("Sound Effects")]
     // Array to hold sound effects
     public AudioClip[] greySpawningSounds;
-    public float deafenAudioAmount = 1.0f;
+    public float deafenAudioAmount = -9f;
+    [SerializeField] private float volumeDecreaseAmount;
 
     // Reference to the AudioSource component
     private AudioSource audioSource;
@@ -276,10 +277,10 @@ public class Chessboard : MonoBehaviour
         chessPieces[7, 0] = SpawnSinglePiece(ChessPieceType.Rook, whiteteam);
 
 
-       /* for (int i = 0; i < TILE_COUNT_X; i++)
+        for (int i = 0; i < TILE_COUNT_X; i++)
         {
             chessPieces[i, 1] = SpawnSinglePiece(ChessPieceType.Pawn, whiteteam);
-        }*/
+        }
 
         //Black Team
         chessPieces[0, 7] = SpawnSinglePiece(ChessPieceType.Rook, blackteam);
@@ -291,10 +292,10 @@ public class Chessboard : MonoBehaviour
         chessPieces[6, 7] = SpawnSinglePiece(ChessPieceType.Knight, blackteam);
         chessPieces[7, 7] = SpawnSinglePiece(ChessPieceType.Rook, blackteam);
 
-        /*for (int i = 0; i < TILE_COUNT_X; i++)
+        for (int i = 0; i < TILE_COUNT_X; i++)
         {
             chessPieces[i, 6] = SpawnSinglePiece(ChessPieceType.Pawn, blackteam);
-        }*/
+        }
 
         
     }
@@ -799,7 +800,7 @@ public class Chessboard : MonoBehaviour
     public bool lockRook = false;
     public bool lockBishop = false;
     public bool lockKnight = false;
-    public bool burnUnit = false;
+    public bool eldrichBoard = false;
     public bool spawnEnemy = false;
     // 
     public bool greyAlive = false;
@@ -890,9 +891,9 @@ public class Chessboard : MonoBehaviour
                 }
                 break;
             case 2:
-                Debug.Log("Random number is 2. Running code C. (burns a unit) ");
+                Debug.Log("Random number is 2. Running code C. (visual effect on board) ");
                 // Run code C
-                burnUnit = true;
+                eldrichBoard = true;
 
                 break;
             case 3:
@@ -1169,8 +1170,10 @@ public class Chessboard : MonoBehaviour
 
             // Set the selected sound effect to the AudioSource and play it
             audioSource.clip = randomClip;
-           // myMixer.SetFloat("Music", Mathf.Log10(-deafenAudioAmount/1000));
+            myMixer.SetFloat("Music", deafenAudioAmount / -9f * volumeDecreaseAmount);
+            //myMixer.SetFloat("Music", Mathf.Log10(deafenAudioAmount) * 20);
             audioSource.Play();
+            
 
         }
         else
