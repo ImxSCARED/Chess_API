@@ -1,7 +1,6 @@
-
+using System.Collections;
 using UnityEngine;
-using UnityEngine.Scripting.APIUpdating;
-using UnityEngine.UIElements;
+
 
 public class CameraMovements : MonoBehaviour
 {
@@ -11,6 +10,7 @@ public class CameraMovements : MonoBehaviour
     public Vector3 blackRotation; // Target camera rotation (Euler angles)
     public float moveSpeed = 1f;  // Speed of position transition
     public float rotateSpeed = 2f; // Speed of rotation transition
+    public float waitTimeBeforeRotation = 1f;
 
     public bool moveToTargetWhite = false;
     public bool moveToTargetBlack = false;
@@ -18,7 +18,7 @@ public class CameraMovements : MonoBehaviour
 
     void Update()
     {
-
+        /*
         if (moveToTargetWhite)
         {
             // Smoothly move the camera to the target position
@@ -52,7 +52,32 @@ public class CameraMovements : MonoBehaviour
                 moveToTargetBlack = false;
             }
         }
-        
+        */
+        if (moveToTargetWhite)
+        {
+            StartCoroutine(MoveAfterDelay(whitePosition, whiteRotation));
+            moveToTargetWhite = false;
+        }
+
+        if (moveToTargetBlack)
+        {
+            StartCoroutine(MoveAfterDelay(blackPosition, blackRotation));
+            moveToTargetBlack = false;
+        }
+    }
+    IEnumerator MoveAfterDelay(Vector3 targetPosition, Vector3 targetRotation)
+    {
+        yield return new WaitForSeconds(waitTimeBeforeRotation);
+
+        // Smoothly move and rotate the camera to the target position and rotation
+        Quaternion targetQuat = Quaternion.Euler(targetRotation);
+        while (Vector3.Distance(Camera.main.transform.position, targetPosition) > 0.1f ||
+               Quaternion.Angle(Camera.main.transform.rotation, targetQuat) > 1f)
+        {
+            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, targetPosition, moveSpeed * Time.deltaTime);
+            Camera.main.transform.rotation = Quaternion.Lerp(Camera.main.transform.rotation, targetQuat, rotateSpeed * Time.deltaTime);
+            yield return null;
+        }
     }
     public void SwitchSides()
     {
