@@ -18,15 +18,5 @@ public class RedDog : ChessPiece
 
         return r;
     }
-    public void RedMove(ref ChessPiece[,] board, int tileCountX, int tileCountY)
-    {
-        List<Vector2Int> moves = GetAvailableMoves(ref board, tileCountX, tileCountY);     
-        
-            Vector2Int move = moves[Random.Range(0, moves.Count)]; // Choose a random move
-            board[currentX, currentY] = null; // Remove the pawn from the current position
-            currentX = move.x;
-            currentY = move.y;
-            board[currentX, currentY] = this; // Place the pawn in the new position
-   
-    }
+    
 }

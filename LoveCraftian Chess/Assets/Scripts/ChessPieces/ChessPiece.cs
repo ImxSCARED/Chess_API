@@ -23,6 +23,7 @@ public class ChessPiece : MonoBehaviour
     public int currentX;
     public int currentY;
     public ChessPieceType type;
+   
 
     public string materialPath = "FrozenMat/Cosmos";
     public string materialPath1 = "PawnMat/Invert";
@@ -31,6 +32,7 @@ public class ChessPiece : MonoBehaviour
     public bool isFrozen = false; //Only use on bishop, Rook, Knight to stop their movement
     private Vector3 desiredPosition;
     private Vector3 desiredScale = Vector3.one;
+
 
     public GreyMind greyScript;
     //private Chessboard chessScript;

@@ -5,10 +5,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Audio;
 using Random = UnityEngine.Random;
 using UnityEngine.UI;
-using UnityEngine.Rendering;
 using System.Collections;
-using System.Runtime.InteropServices.WindowsRuntime;
-using UnityEngine.Experimental.GlobalIllumination;
+
 
 public enum SpecialMove
 {
@@ -37,6 +35,11 @@ public class Chessboard : MonoBehaviour
     //LOGIC
     private ChessPiece[,] chessPieces;
     private ChessPiece currentlyDragging;
+    private ChessPiece currentDog;
+    private ChessPiece dogTarget;
+    private ChessPiece SecondDog;
+    private ChessPiece dogTarget2;
+
     private List<Vector2Int> availableMoves = new List<Vector2Int>();
     private List<ChessPiece> deadWhites = new List<ChessPiece>();
     private List<ChessPiece> deadBlacks = new List<ChessPiece>();
@@ -62,13 +65,13 @@ public class Chessboard : MonoBehaviour
     // counters
     public int turnNumber = 1;
     public int greyturnCounter = 0;
-    public int enemyturnCounter = 0;
+    public int redturnCounter = 0;
     public int killCounter = 0;
     public int killCounterMax = 7;
     
     // designer edited
     public int greyEveryXTurns = 4;
-    public int EnemyEveryXTurns = 2;
+    public int redEveryXTurns = 3;
 
     [Header("Coin Related")]
     //Coin stuff
@@ -103,6 +106,8 @@ public class Chessboard : MonoBehaviour
     [SerializeField] private AudioMixer myMixer;
     [SerializeField] private Slider musicSliderDeafault;
 
+    
+
 
     /// //////////////
     /// ////////////////////////////////Seperation space ///////////////////////////////////////////////////////////////////
@@ -117,7 +122,6 @@ public class Chessboard : MonoBehaviour
 
         GenerateAllTiles(tileSize, TILE_COUNT_X, TILE_COUNT_Y);
         SpawnAllPieces();
-        //SpawnElderTeam();
         PositionAllpieces();
     }
     private void Update()
@@ -131,32 +135,32 @@ public class Chessboard : MonoBehaviour
         Ray ray = currentCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Tile", "Hover", "Highlight")))
         {
-             //Get the indexes of tile we hit
-             Vector2Int hitPosition = LookupTileIndex(info.transform.gameObject);
+            //Get the indexes of tile we hit
+            Vector2Int hitPosition = LookupTileIndex(info.transform.gameObject);
 
-             //If we are hovering any tile after not hovering any tile
-             if (currentHover == -Vector2Int.one)
+            //If we are hovering any tile after not hovering any tile
+            if (currentHover == -Vector2Int.one)
+            {
+                currentHover = hitPosition;
+                tiles[hitPosition.x, hitPosition.y].layer = LayerMask.NameToLayer("Hover");
+            }
+
+            //if we were already hovernig a tile, change previous
+            if (currentHover != hitPosition)
+            {
+                tiles[currentHover.x, currentHover.y].layer = (ContainsValidMove(ref availableMoves, currentHover)) ? LayerMask.NameToLayer("Highlight") : LayerMask.NameToLayer("Tile");
+                currentHover = hitPosition;
+                tiles[currentHover.x, hitPosition.y].layer = LayerMask.NameToLayer("Hover");
+            }
+
+            //if we press down left click on mouse
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (chessPieces[hitPosition.x, hitPosition.y] != null)
                 {
-                    currentHover = hitPosition;
-                    tiles[hitPosition.x, hitPosition.y].layer = LayerMask.NameToLayer("Hover");
-                }
-
-             //if we were already hovernig a tile, change previous
-             if (currentHover != hitPosition)
-                {
-                    tiles[currentHover.x, currentHover.y].layer = (ContainsValidMove(ref availableMoves, currentHover)) ? LayerMask.NameToLayer("Highlight") : LayerMask.NameToLayer("Tile");
-                    currentHover = hitPosition;
-                    tiles[currentHover.x, hitPosition.y].layer = LayerMask.NameToLayer("Hover");
-                }
-
-             //if we press down left click on mouse
-             if(Input.GetMouseButtonDown(0))
-             {
-                 if (chessPieces[hitPosition.x,hitPosition.y] != null)
-                 {
-                     //Is it our turn? 
-                     if((chessPieces[hitPosition.x, hitPosition.y].team == 0 && isWhiteTurn) || (chessPieces[hitPosition.x, hitPosition.y].team == 1 && !isWhiteTurn))
-                     {
+                    //Is it our turn? 
+                    if ((chessPieces[hitPosition.x, hitPosition.y].team == 0 && isWhiteTurn) || (chessPieces[hitPosition.x, hitPosition.y].team == 1 && !isWhiteTurn))
+                    {
                         currentlyDragging = chessPieces[hitPosition.x, hitPosition.y];
 
                         // Get a list of where i can go, Highlight titles as well
@@ -168,23 +172,63 @@ public class Chessboard : MonoBehaviour
                         PreventCheck();
                         HighlightTiles();
 
-                     }
-                 }
-             }
+                    }
+                }
+            }
 
-             //if we are releasing left click on mouse
-             if (currentlyDragging != null && Input.GetMouseButtonUp(0))
-             {
-                 Vector2Int previousPositon = new Vector2Int(currentlyDragging.currentX, currentlyDragging.currentY);
-                 
-                 bool validMove = Moveto(currentlyDragging, hitPosition.x, hitPosition.y);
-                 if (!validMove)
-                     currentlyDragging.SetPosition(GetTileCenter(previousPositon.x, previousPositon.y));     
-                 
-                 currentlyDragging = null;
-                 RemoveHighlightTiles();
+            //if we are releasing left click on mouse
+            if (currentlyDragging != null && Input.GetMouseButtonUp(0))
+            {
+                Vector2Int previousPositon = new Vector2Int(currentlyDragging.currentX, currentlyDragging.currentY);
+                int oldTurnNumber = turnNumber;
 
-             }
+                bool validMove = Moveto(currentlyDragging, hitPosition.x, hitPosition.y);
+                if (!validMove)
+                    currentlyDragging.SetPosition(GetTileCenter(previousPositon.x, previousPositon.y));
+
+
+                currentlyDragging = null;
+                RemoveHighlightTiles();
+                if (oldTurnNumber != turnNumber)
+                {
+                    if (currentDog != null)
+                    {
+                        if (dogTarget == null)
+                        {
+                            SetWeightedRandomDogTarget();
+                            Debug.Log("the Dog's Null target Set Weight was activated");
+                        }
+                        Dog1();
+                        /*
+                        int horizontalMove = 0;  
+                        int verticalMove = 0;
+
+                        int targetPosX = dogTarget.currentX;  //These are where we want to end up. Set them to the x/y position of the target piece later.
+                        int targetPosY = dogTarget.currentY;
+                        Debug.Log("the Target's  X,Y Position are: " + "X" +  targetPosX + "Y" + targetPosY);
+
+                        //These next four lines are your 'pathfinding'.
+                        if (currentDog.currentX > targetPosX) horizontalMove = -1;
+                        else if (currentDog.currentX < targetPosX) horizontalMove = 1;
+
+                        if (currentDog.currentY > targetPosY) verticalMove = -1;
+                        else if (currentDog.currentY < targetPosY) verticalMove = 1;
+
+                        MoveDog(currentDog, currentDog.currentX + horizontalMove, currentDog.currentY + verticalMove);
+                        */
+
+                    }
+                    if (SecondDog != null)
+                    {
+                        if (dogTarget2 == null)
+                        {
+                            SetWeightedRandomDogTarget();
+
+                        }
+                        Dog2();
+                    }
+                }
+            }
         }
         else
         {
@@ -209,7 +253,20 @@ public class Chessboard : MonoBehaviour
             if (horizontalPlane.Raycast(ray, out distance))
                 currentlyDragging.SetPosition(ray.GetPoint(distance) + Vector3.up * dragOffset);
         }
+        // GreyMind is Spawned here
+        if (greyturnCounter >= greyEveryXTurns && greyAlive == false)
+        {
+            CreateGreyMind();
+            greyturnCounter = 0;
+        }
 
+        if (redturnCounter >= redEveryXTurns && currentDog == null)
+        {
+            CreateRedDog();
+            redturnCounter = 0;
+        }
+
+        //this is just for testing
         if (Input.GetKeyDown(KeyCode.B))
         {
             CreateGreyMind();
@@ -217,24 +274,17 @@ public class Chessboard : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.N))
         {
-            //CreateRedDog();
+            CreateRedDog();
+
+        }
+        if (Input.GetKeyDown(KeyCode.M))
+        {
             SpawnCoin();
         }
 
-        if(greyturnCounter >= greyEveryXTurns && greyAlive == false)
-        {
-            CreateGreyMind();
-            greyturnCounter = 0;
-        }
-
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            float volume1 = musicSliderDeafault.value;
-            myMixer.SetFloat("Music", Mathf.Log10(volume1) * 20);
-        }
 
     }
-   
+
 
 
     // Generate the Board
@@ -787,7 +837,15 @@ public class Chessboard : MonoBehaviour
                     DestroyGreyMind();
                     Destroy(ocp.gameObject);
                 }
-                if (ocp.transform.CompareTag("RedDog") || ocp.transform.CompareTag("YellowMind"))
+                if (ocp.transform.CompareTag("RedDog"))
+                {
+                    Destroy(ocp.gameObject);
+                    currentDog = null;
+                    redturnCounter = 0;
+                    SpawnCoin();
+                    killCounter++;
+                }
+                if (ocp.transform.CompareTag("YellowMind"))
                 {
                     Destroy(ocp.gameObject);
                 }
@@ -804,30 +862,28 @@ public class Chessboard : MonoBehaviour
 
         turnNumber++;
         greyturnCounter++;
-        if(killCounter >= killCounterMax)
+        redturnCounter++;
+        if (killCounter >= killCounterMax)
         {
             SceneManager.LoadScene("Victory Screen");
         }
         Debug.Log(greyturnCounter);
-
+        Debug.Log(redturnCounter);
         //Debug.Log("Turn Number: " + turnNumber);
-        
+
 
         // 
-        if(isWhiteTurn==true)
+        if (isWhiteTurn==true)
         {
             Debug.Log("White Turn");
         }
         else
         {
             Debug.Log("Black Turn");
-            //RedMoves();
         }
         
         
         // // // 
-        
-
         moveList.Add(new Vector2Int[] {previousPosition, new Vector2Int(x,y)});
 
         ProcessSpecialMove();
@@ -837,9 +893,11 @@ public class Chessboard : MonoBehaviour
                 break;
             case 1:
                 CheckMate(cp.team);
+                Debug.Log("The Chackmate us called in check for Checkmate" + cp.team + "team won!"); 
                 break;
             case 2:
                 CheckMate(2);
+                Debug.Log("The Chackmate us called in check for Checkmate - case 2 was activated");
                 break;
             }
 
@@ -875,14 +933,14 @@ public class Chessboard : MonoBehaviour
         int maxAttempts = 100; // Set a limit to avoid potential infinite loops
         bool placedSuccessfully = false;
         ///
-        Debug.Log("i have arrived Mortal fleash");
+        //Debug.Log("i have arrived Mortal fleash");
 
-        int randomNumber = UnityEngine.Random.Range(0, 2);
+        int randomNumber = Random.Range(0, 2);
 
         switch (randomNumber)
         {
             case 0:
-                Debug.Log("Random number is 0. Running code A. (pawn switch)");
+                //Debug.Log("Random number is 0. Running code A. (pawn switch)");
                 // Run code A
                 StartCoroutine(PlayGreySpawnSounds());
                 effectcolor = 0;
@@ -900,7 +958,7 @@ public class Chessboard : MonoBehaviour
                 }
                 break;
             case 1:
-                Debug.Log("Random number is 1. Running code B.(locking rook, bishops or knights switch)");
+                //Debug.Log("Random number is 1. Running code B.(locking rook, bishops or knights switch)");
                 StartCoroutine(PlayGreyFreezeSounds());
                 effectcolor = 1;
                 int randomFreeze = Random.Range(0, 3);
@@ -960,16 +1018,15 @@ public class Chessboard : MonoBehaviour
                 }
                 break;
             case 2:
+                Debug.Log("Random number is 3. Running code D. (spawn en enemy unit");
+                effectcolor = 3;
+                //CreateElderRedDog();
+                spawnEnemy = true;
+                break;
+            case 3:
                 Debug.Log("Random number is 2. Running code C. (Burn Effect) ");
                 effectcolor = 2;
                 elderBurn = true;
-
-                break;
-            case 3:
-                Debug.Log("Random number is 3. Running code D. (spawn en enemy unit");
-                // Run code C
-                effectcolor = 3;
-                spawnEnemy = true;
                 break;
             default:
                 Debug.LogError("Unexpected random number!");
@@ -1003,8 +1060,8 @@ public class Chessboard : MonoBehaviour
                 }
                 placedSuccessfully = true;
                 greyAlive = true;
-                Debug.Log("grey is Alive bool is set to" + greyAlive);
-                //StartCoroutine(PlayGreySpawnSounds());
+                
+                
 
             }
             else
@@ -1061,7 +1118,7 @@ public class Chessboard : MonoBehaviour
                 placedSuccessfully = true;
                 greyAlive = true;
                 Debug.Log("grey is Alive bool is set to" + greyAlive);
-                //StartCoroutine(PlayGreySpawnSounds());
+                
             }
         }
 
@@ -1071,7 +1128,6 @@ public class Chessboard : MonoBehaviour
         
 
     }
-
     private void DestroyGreyMind()
     {
         greyturnCounter = 0;
@@ -1151,12 +1207,15 @@ public class Chessboard : MonoBehaviour
             int randomRedY = Random.Range(2, 6);
             int eteam = 2;
             ChessPiece redDog = SpawnSingleElder(ChessPieceType.RedDog, eteam);
-
+            currentDog = redDog;
             if (chessPieces[randomRedX, randomRedY] == null)
             {
                 chessPieces[randomRedX, randomRedY] = redDog;
                 PositionSinglePiece(randomRedX, randomRedY, true);
                 placedSuccessfully = true;
+                //Debug.Log("the Dog's spawn X,Y Position are: " + "X" + randomRedX + "Y" + randomRedY);
+                SetWeightedRandomDogTarget();
+                Debug.Log("the Dog's spawn Set Weight was activated");
             }
             else
             {
@@ -1199,17 +1258,88 @@ public class Chessboard : MonoBehaviour
                 chessPieces[randomRedX, randomRedY] = redDog;
                 PositionSinglePiece(randomRedX, randomRedY, true);
                 placedSuccessfully = true;
+                //Debug.Log("the Dog's spawn X,Y Position are: " + "X" + randomRedX + "Y" + randomRedY);
+                SetWeightedRandomDogTarget();
+                Debug.Log("the Dog's spawn Set Weight was activated");
+
+            }
+        }
+        
+        return placedSuccessfully;
+    }
+    private bool CreateElderRedDog()
+    {
+        int attempts = 0;
+        int maxAttempts = 100; // Set a limit to avoid potential infinite loops
+        bool placedSuccessfully = false;
+
+        while (!placedSuccessfully && attempts < maxAttempts)
+        {
+            attempts++;
+            int randomRedX = Random.Range(0, 8);
+            int randomRedY = Random.Range(2, 6);
+            int eteam = 2;
+            ChessPiece redDog = SpawnSingleElder(ChessPieceType.RedDog, eteam);
+            SecondDog = redDog;
+            if (chessPieces[randomRedX, randomRedY] == null)
+            {
+                chessPieces[randomRedX, randomRedY] = redDog;
+                PositionSinglePiece(randomRedX, randomRedY, true);
+                placedSuccessfully = true;
+                //Debug.Log("the Dog's spawn X,Y Position are: " + "X" + randomRedX + "Y" + randomRedY);
+                SetWeightedRandomDogTarget();
+                Debug.Log("the Dog's spawn Set Weight was activated");
+            }
+            else
+            {
+                ChessPiece ocp = chessPieces[randomRedX, randomRedY];
+
+                if (redDog.team == ocp.team)
+                {
+                    // If the same team, retry
+                    continue;
+                }
+
+                // If it's the enemy team
+                if (ocp.team == 0)
+                {
+                    if (ocp.type == ChessPieceType.King)
+                        CheckMate(1);
+
+                    deadWhites.Add(ocp);
+                    ocp.SetScale(Vector3.one * deathSize);
+                    ocp.SetPosition(
+                        new Vector3(8 * tileSize, yOffset, -1 * tileSize)
+                        - bounds
+                        + new Vector3(tileSize / 2, 0, tileSize / 2)
+                        + (Vector3.forward * deathSpacing) * deadWhites.Count);
+                }
+                else if (ocp.team == 1)
+                {
+                    if (ocp.type == ChessPieceType.King)
+                        CheckMate(0);
+
+                    deadBlacks.Add(ocp);
+                    ocp.SetScale(Vector3.one * deathSize);
+                    ocp.SetPosition(
+                        new Vector3(-1 * tileSize, yOffset, 8 * tileSize)
+                        - bounds
+                        + new Vector3(tileSize / 2, 0, tileSize / 2)
+                        + (Vector3.back * deathSpacing) * deadBlacks.Count);
+                }
+
+                chessPieces[randomRedX, randomRedY] = redDog;
+                PositionSinglePiece(randomRedX, randomRedY, true);
+                placedSuccessfully = true;
+                //Debug.Log("the Dog's spawn X,Y Position are: " + "X" + randomRedX + "Y" + randomRedY);
+                SetWeightedRandomDogTarget();
+                Debug.Log("the Dog's spawn Set Weight was activated");
+
             }
         }
 
         return placedSuccessfully;
     }
- 
-    private void RedMoves()
-    {
-     
-    }
-
     private void SpawnCoin()
     {
         Vector3 randomPosition = new Vector3(
@@ -1221,7 +1351,6 @@ public class Chessboard : MonoBehaviour
         Rigidbody rb = InstantCoin.GetComponent<Rigidbody>();
         rb.angularVelocity = angularVelocity;
     }
-
     IEnumerator PlayGreySpawnSounds()
     {
         if (greySpawningSounds.Length > 0)
@@ -1280,7 +1409,6 @@ public class Chessboard : MonoBehaviour
         float volume1 = musicSliderDeafault.value;
         myMixer.SetFloat("Music", Mathf.Log10(volume1) * 20);
     }
-
     IEnumerator PlayGreyFreezeSounds()
     {
         if (greyFreezeSounds.Length > 0)
@@ -1311,4 +1439,220 @@ public class Chessboard : MonoBehaviour
         float volume1 = musicSliderDeafault.value;
         myMixer.SetFloat("Music", Mathf.Log10(volume1) * 20);
     }
+
+    private bool MoveDog(ChessPiece cp, int x, int y)
+    {
+        //if (!ContainsValidMove(ref availableMoves, new Vector2Int(x, y)))
+        //return false;
+
+        Vector2Int previousPosition = new Vector2Int(cp.currentX, cp.currentY);
+
+        //is there another piece on the target position?
+        if (chessPieces[x, y] != null)
+        {
+            ChessPiece ocp = chessPieces[x, y];
+
+            if (cp.team == ocp.team)
+                return false;
+
+            //if it's enemy team
+            if (ocp.team == 0)
+            {
+
+                if (ocp.type == ChessPieceType.King)
+                    CheckMate(1);
+
+                deadWhites.Add(ocp);
+                ocp.SetScale(Vector3.one * deathSize);
+                ocp.SetPosition(
+                    new Vector3(8 * tileSize, yOffset, -1 * tileSize)
+                    - bounds
+                    + new Vector3(tileSize / 2, 0, tileSize / 2)
+                    + (Vector3.forward * deathSpacing) * deadWhites.Count);
+                if (ocp == dogTarget)
+                {
+                    dogTarget = null;
+                }
+            }
+            else if (ocp.team == 1)
+            {
+                if (ocp.type == ChessPieceType.King)
+                   CheckMate(0);
+
+                deadBlacks.Add(ocp);
+                ocp.SetScale(Vector3.one * deathSize);
+                ocp.SetPosition(
+                    new Vector3(-1 * tileSize, yOffset, 8 * tileSize)
+                    - bounds
+                    + new Vector3(tileSize / 2, 0, tileSize / 2)
+                    + (Vector3.back * deathSpacing) * deadBlacks.Count);
+                if (ocp == dogTarget)
+                {
+                    dogTarget = null;
+                }
+            }
+         
+        }
+        chessPieces[x, y] = cp;
+        chessPieces[previousPosition.x, previousPosition.y] = null;
+        PositionSinglePiece(x, y);
+        //Debug.Log("the Dog's new  X,Y Position are: " + "X" + x + "Y" + y);
+
+        return true;
+
+
+    }
+
+    private bool MoveDog2(ChessPiece cp, int x, int y)
+    {
+        //if (!ContainsValidMove(ref availableMoves, new Vector2Int(x, y)))
+        //return false;
+
+        Vector2Int previousPosition = new Vector2Int(cp.currentX, cp.currentY);
+
+        //is there another piece on the target position?
+        if (chessPieces[x, y] != null)
+        {
+            ChessPiece ocp = chessPieces[x, y];
+
+            if (cp.team == ocp.team)
+                return false;
+
+            //if it's enemy team
+            if (ocp.team == 0)
+            {
+
+                if (ocp.type == ChessPieceType.King)
+                    CheckMate(1);
+
+                deadWhites.Add(ocp);
+                ocp.SetScale(Vector3.one * deathSize);
+                ocp.SetPosition(
+                    new Vector3(8 * tileSize, yOffset, -1 * tileSize)
+                    - bounds
+                    + new Vector3(tileSize / 2, 0, tileSize / 2)
+                    + (Vector3.forward * deathSpacing) * deadWhites.Count);
+                if (ocp == dogTarget2)
+                {
+                    dogTarget2 = null;
+                }
+            }
+            else if (ocp.team == 1)
+            {
+                if (ocp.type == ChessPieceType.King)
+                    CheckMate(0);
+
+                deadBlacks.Add(ocp);
+                ocp.SetScale(Vector3.one * deathSize);
+                ocp.SetPosition(
+                    new Vector3(-1 * tileSize, yOffset, 8 * tileSize)
+                    - bounds
+                    + new Vector3(tileSize / 2, 0, tileSize / 2)
+                    + (Vector3.back * deathSpacing) * deadBlacks.Count);
+                if (ocp == dogTarget2)
+                {
+                    dogTarget2 = null;
+                }
+            }
+
+        }
+        chessPieces[x, y] = cp;
+        chessPieces[previousPosition.x, previousPosition.y] = null;
+        PositionSinglePiece(x, y);
+        //Debug.Log("the Dog's new  X,Y Position are: " + "X" + x + "Y" + y);
+
+        return true;
+
+
+    }
+    public void SetWeightedRandomDogTarget()
+    {
+        List<ChessPiece> grabBag = new List<ChessPiece>();
+
+        //I don't know what the actual variable is called that is the list of all the pieces so I'm guessing 'pieces' here...
+        foreach (ChessPiece thisPiece in chessPieces)
+        {
+            if (thisPiece != null)
+            {
+                switch (thisPiece.type)
+                {
+                    case ChessPieceType.Pawn:
+                        grabBag.Add(thisPiece);
+                        break;
+                    case ChessPieceType.Rook: //Add rooks three times to make them three times more likely than pawns.
+                        grabBag.Add(thisPiece);
+                        grabBag.Add(thisPiece);
+                        grabBag.Add(thisPiece);
+                        break;
+                    case ChessPieceType.Bishop: //Add rooks three times to make them three times more likely than pawns.
+                        grabBag.Add(thisPiece);
+                        grabBag.Add(thisPiece);
+                        grabBag.Add(thisPiece);
+                        break;
+                    case ChessPieceType.Knight: //Add rooks three times to make them three times more likely than pawns.
+                        grabBag.Add(thisPiece);
+                        grabBag.Add(thisPiece);
+                        grabBag.Add(thisPiece);
+                        break;
+                    case ChessPieceType.Queen: //Add rooks three times to make them three times more likely than pawns.
+                        grabBag.Add(thisPiece);
+                        grabBag.Add(thisPiece);
+                        grabBag.Add(thisPiece);
+                        break;
+                    case ChessPieceType.King:
+                        break;    //Don't add the king at all - we don't want it to be a target.
+
+                        //add your own case statements here to make the array of piece references. Add pieces more times if you want them to be more likely.
+                }
+
+            }
+        }
+        if(dogTarget == null)
+        {
+            dogTarget = grabBag[Random.Range(0, grabBag.Count)];
+            Debug.Log("the target for dog 1 is " + dogTarget);
+        }
+        if(dogTarget2 == null)
+        {
+            dogTarget2 = grabBag[Random.Range(0, grabBag.Count)];
+            Debug.Log("the target for dog 2 is " + dogTarget2);
+        }
+    }
+
+    private void Dog1()
+    {
+        int horizontalMove = 0;
+        int verticalMove = 0;
+
+        int targetPosX = dogTarget.currentX;  //These are where we want to end up. Set them to the x/y position of the target piece later.
+        int targetPosY = dogTarget.currentY;
+        Debug.Log("the Target's  X,Y Position are: " + "X" + targetPosX + "Y" + targetPosY);
+
+        //These next four lines are your 'pathfinding'.
+        if (currentDog.currentX > targetPosX) horizontalMove = -1;
+        else if (currentDog.currentX < targetPosX) horizontalMove = 1;
+
+        if (currentDog.currentY > targetPosY) verticalMove = -1;
+        else if (currentDog.currentY < targetPosY) verticalMove = 1;
+
+        MoveDog(currentDog, currentDog.currentX + horizontalMove, currentDog.currentY + verticalMove);
+    } // pathfinding and move script for dog that spawns every 2 turns
+    private void Dog2()
+    {
+        int horizontalMove2 = 0;
+        int verticalMove2 = 0;
+
+        int targetPosX2 = dogTarget2.currentX;  //These are where we want to end up. Set them to the x/y position of the target piece later.
+        int targetPosY2 = dogTarget2.currentY;
+        Debug.Log("the Target's  X,Y Position are: " + "X" + targetPosX2 + "Y" + targetPosY2);
+
+        //These next four lines are your 'pathfinding'.
+        if (SecondDog.currentX > targetPosX2) horizontalMove2 = -1;
+        else if (SecondDog.currentX < targetPosX2) horizontalMove2 = 1;
+
+        if (SecondDog.currentY > targetPosY2) verticalMove2 = -1;
+        else if (SecondDog.currentY < targetPosY2) verticalMove2 = 1;
+
+        MoveDog2(SecondDog, SecondDog.currentX + horizontalMove2, SecondDog.currentY + verticalMove2);
+    }  // pathfinding and move script for dog that spawns with elder
 } 

@@ -10,8 +10,4 @@ public class GreyMind : ChessPiece
         List<Vector2Int> r = new List<Vector2Int>();
         return r;
     }
-    private void Awake()
-    {
-        
-    }
 }
